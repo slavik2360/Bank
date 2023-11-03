@@ -4,8 +4,10 @@ Django REST
 # How to deploy ?
 
 ## Install requirements
-
+#MacOs or Linux
 pip install -r tools/requirements/base.txt
+#Windows
+pip install -r tools\requirements\base.txt
 
 ## Apply migrations
 
