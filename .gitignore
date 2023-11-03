@@ -1,2 +1,7 @@
+# Env
 .env
+env
 env/
+
+# Python import cache
+__pycache__/
