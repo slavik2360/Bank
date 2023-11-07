@@ -4,12 +4,12 @@
 # # Django
 from django.contrib import admin
 
-# # Local
-# # from .models import ()
+# Local
+from .models import User
 
-# @admin.register()
-# class Admin(admin.ModelAdmin):
-#     """
-#     Admin admin.
-#     """
-#     readonly_fields = ()
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    """
+    UserAdmin admin.
+    """
+    readonly_fields = ()

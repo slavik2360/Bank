@@ -2,7 +2,7 @@
 from typing import Any
 
 # Django
-from django.contrib.auth.models import User
+from auths.models import User
 from django.core.management.base import BaseCommand
 
 
@@ -10,7 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args: Any, **kwargs: Any) -> None:
         try:
             User.objects.create_superuser(
-                username='root',
+                first_name='root',
                 email='root@root.com',
                 password='qwe',
                 first_name='Вячеслав',

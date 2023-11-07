@@ -6,7 +6,11 @@ from django.contrib.auth.base_user import (
     BaseUserManager,
     AbstractBaseUser,
 )
-from django.core.validators import MinLengthValidator
+from django.core.validators import (
+    MinLengthValidator,
+    EmailValidator
+)
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 # Python
@@ -28,13 +32,15 @@ class UserManager(BaseUserManager, AbstractManager):
     def create_superuser(self, email: str, first_name: str,
                          last_name: str, password: str) -> 'User':
         """
-        Create super user method.
+        Создание суперпользовательского метода.
         """
-        u: User = User(email=email, first_name=first_name,
+
+        u: User = self.model(email=self.normalize_email(email), first_name=first_name,
                        last_name=last_name, password=password)
         u.is_superuser = True
         u.is_active = True
         u.is_staff = True
+        u.set_password(password)
         u.save(using=self._db)
         return u
 
@@ -42,17 +48,21 @@ class UserManager(BaseUserManager, AbstractManager):
                     last_name: str, password: str,
                     password2: str) -> 'User':
         """
-        Create default user method.
+        Создание пользовательского метода.
         """
-        u: User = User(email=email, first_name=first_name,
+        if not email:
+            raise ValidationError('Требуется электронная почта!!!')
+        
+        u: User = self.model(email=self.normalize_email(email), first_name=first_name,
                        last_name=last_name, password=password,
                        password2=password2)
+        u.set_password(password)
         u.save(using=self._db)
         return u
 
     def get_user_or_none(self, **filter: Any) -> 'User':
         """
-        Get user or None by field.
+        Получить пользователя или нет по полю.
         """
         try:
             user: User = self.get(**filter)
@@ -64,18 +74,13 @@ class UserManager(BaseUserManager, AbstractManager):
 
 class User(PermissionsMixin, AbstractBaseUser, AbstractModel):
     """
-    Custom model of user.
+    Кастомная модель пользователя.
     """
+    # Возможный пол пользователя
     class Geders(models.TextChoices):
         MALE= 'MALE', 'Мужчина'
         FEMALE = 'FEMALE', 'Женщина'
-    # Все возможные пол пользователя
-    # MALE: int = 1
-    # FEMALE: int = 2
-    # GENDERS: tuple = (
-    #     (MALE, 'male'),
-    #     (FEMALE, 'female'),
-    # )
+
     # Имя пользователя
     first_name: str = models.CharField(
         verbose_name='имя',
@@ -94,7 +99,7 @@ class User(PermissionsMixin, AbstractBaseUser, AbstractModel):
     )
     # Пароль1 Хэшировать в signals.py при создании!
     password: str = models.CharField(
-        verbose_name='пароль1',
+        verbose_name='пароль11',
         max_length=128,
         validators=(
             MinLengthValidator(7),
@@ -111,7 +116,7 @@ class User(PermissionsMixin, AbstractBaseUser, AbstractModel):
     # Пол пользователя
     gender: int = models.SmallIntegerField(
         verbose_name='gender',
-        choices=Geders,
+        choices=Geders.choices,
         null=True
     )
     # Есть ли учетная запись пользователя подтверждена для ее использования
@@ -150,7 +155,7 @@ class User(PermissionsMixin, AbstractBaseUser, AbstractModel):
         """
         return self.is_active and self.is_superuser and self.is_staff
 
-    def __repr__(self) -> str:
+    def __str__(self) -> str:
         return self.fullname
 
     class Meta:
