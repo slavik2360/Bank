@@ -8,68 +8,71 @@ from django.contrib.auth.base_user import (
 )
 from django.core.validators import (
     MinLengthValidator,
-    EmailValidator
+    MaxLengthValidator
 )
-from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.conf import settings
+import jwt
 
 # Python
-import datetime
+from datetime import datetime, timedelta
 from typing import Any
 
-# Третья сторона
+# Local
 from abstracts.models import (
     AbstractModel,
     AbstractManager,
 )
+ 
 
 
 class UserManager(BaseUserManager, AbstractManager):
     """
-    Manager for custom create methods for user model.
+    Менеджер для пользовательских методов создания пользовательской модели.
     """
-
-    def create_superuser(self, email: str, first_name: str,
-                         last_name: str, password: str) -> 'User':
-        """
-        Создание суперпользовательского метода.
-        """
-
-        u: User = self.model(email=self.normalize_email(email), first_name=first_name,
-                       last_name=last_name, password=password)
-        u.is_superuser = True
-        u.is_active = True
-        u.is_staff = True
-        u.set_password(password)
-        u.save(using=self._db)
-        return u
 
     def create_user(self, email: str, first_name: str,
                     last_name: str, password: str,
                     password2: str) -> 'User':
         """
-        Создание пользовательского метода.
+        Создает и возвращает пользователя с имейлом, паролем и именем.
         """
-        if not email:
-            raise ValidationError('Требуется электронная почта!!!')
+
+        if email is None:
+            raise TypeError('Users must have an email address.')
         
-        u: User = self.model(email=self.normalize_email(email), first_name=first_name,
+        user: 'User' = self.model(email=self.normalize_email(email), first_name=first_name,
                        last_name=last_name, password=password,
                        password2=password2)
-        u.set_password(password)
-        u.save(using=self._db)
-        return u
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email: str, first_name: str,
+                         last_name: str, password: str) -> 'User':
+        """
+        Создает и возввращет пользователя с привилегиями суперадмина.
+        """
+        if password is None:
+            raise TypeError('Superusers must have a password.')
+        
+        user: 'User' = self.model(email=self.normalize_email(email), first_name=first_name,
+                       last_name=last_name, password=password)
+        user.is_superuser = True
+        user.is_active = True
+        user.is_staff = True
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
     def get_user_or_none(self, **filter: Any) -> 'User':
         """
-        Получить пользователя или нет по полю.
+        Получить пользователя или None по фильтру.
         """
         try:
-            user: User = self.get(**filter)
+            user: 'User' = self.get(**filter)
         except User.DoesNotExist:
             user = None
-        finally:
-            return user
+        return user
 
 
 class User(PermissionsMixin, AbstractBaseUser, AbstractModel):
@@ -77,10 +80,12 @@ class User(PermissionsMixin, AbstractBaseUser, AbstractModel):
     Кастомная модель пользователя.
     """
     # Возможный пол пользователя
-    class Geders(models.TextChoices):
-        MALE= 'MALE', 'Мужчина'
-        FEMALE = 'FEMALE', 'Женщина'
-
+    MALE: int = 1
+    FEMALE: int = 2
+    GENDERS: tuple = (
+        (MALE, 'мужчина'),
+        (FEMALE, 'женщина'),
+    )
     # Имя пользователя
     first_name: str = models.CharField(
         verbose_name='имя',
@@ -99,7 +104,7 @@ class User(PermissionsMixin, AbstractBaseUser, AbstractModel):
     )
     # Пароль1 Хэшировать в signals.py при создании!
     password: str = models.CharField(
-        verbose_name='пароль11',
+        verbose_name='пароль1',
         max_length=128,
         validators=(
             MinLengthValidator(7),
@@ -115,8 +120,8 @@ class User(PermissionsMixin, AbstractBaseUser, AbstractModel):
     )
     # Пол пользователя
     gender: int = models.SmallIntegerField(
-        verbose_name='gender',
-        choices=Geders.choices,
+        verbose_name='пол',
+        choices=GENDERS,
         null=True
     )
     # Есть ли учетная запись пользователя подтверждена для ее использования
@@ -147,13 +152,36 @@ class User(PermissionsMixin, AbstractBaseUser, AbstractModel):
     def fullname(self) -> str:
         return '%s %s' % (self.last_name, self.first_name)
 
-    # Проверьте, есть ли у пользователя привилегии администратора
+    # Проверка, есть ли у пользователя привилегии администратора
     @property
     def is_admin(self) -> bool:
         """
-        Used for superuser authentication.
+        Используется для аутентификации суперпользователя.
         """
         return self.is_active and self.is_superuser and self.is_staff
+    
+    @property
+    def token(self):
+        """
+        Позволяет получить токен пользователя путем вызова user.token, вместо
+        user._generate_jwt_token().
+        """
+        return self._generate_jwt_token()
+    
+    def _generate_jwt_token(self):
+        """
+        Генерирует веб-токен JSON, в котором хранится идентификатор этого
+        пользователя, срок действия токена составляет 1 день от создания
+        """
+        dt = datetime.now() + timedelta(days=1)
+
+        token = jwt.encode({
+        'id': self.pk,
+        'exp': int(dt.strftime('%s')),
+        'is_active': self.is_active 
+        }, settings.SECRET_KEY, algorithm='HS256')
+
+        return token
 
     def __str__(self) -> str:
         return self.fullname
@@ -162,5 +190,124 @@ class User(PermissionsMixin, AbstractBaseUser, AbstractModel):
         ordering = (
             'datetime_created',
         )
-        verbose_name = 'user'
-        verbose_name_plural = 'users'
+        verbose_name = 'пользователь'
+        verbose_name_plural = 'пользователи'
+
+
+class CodeManager(models.Manager):
+    """
+    Менеджер для управления кодами.
+    """
+
+    def extended_filter(self, expired: bool, **kwargs: dict) -> QuerySet['AccountCode']:
+        """
+        Расширенный фильтр для управления кодами.
+
+        :param expired: Флаг, указывающий, следует ли проверять срок действия кода.
+        :param kwargs: Дополнительные параметры для фильтрации кодов.
+        :return: QuerySet кодов, соответствующих заданным критериям.
+        """
+        now = timezone.now()
+        filter_params = {'datetime_expire__lt': now} if expired else {'datetime_expire__gt': now}
+        queryset = self.filter(**kwargs, **filter_params)
+        return queryset
+
+class AccountCode(models.Model):
+    """
+    Код для пользователей для подтверждения различных действий.
+    """
+    # Длина активационного кода
+    CODE_LENGTH: int = 6
+    # Время жизни кода
+    LIFETIME: timezone.timedelta = timezone.timedelta(minutes=10)
+    # Код активации аккаунта
+    ACCOUNT_ACTIVATION: int = 1
+    # Код сброса пароля
+    PASSWORD_RESET: int = 2
+    TYPES: tuple = (
+        (ACCOUNT_ACTIVATION, 'ACCOUNT-ACTIVATION'),
+        (PASSWORD_RESET, 'PASSWORD-RESET'),
+    )
+    code_type: int = models.PositiveSmallIntegerField(
+        verbose_name='тип кода',
+        choices=TYPES,
+        default=ACCOUNT_ACTIVATION
+    )
+    user: 'User' = models.ForeignKey(
+        verbose_name='пользователь',
+        to=User,
+        on_delete=models.CASCADE,
+        related_name='activate_account_codes',
+        null=True
+    )
+    code: str = models.CharField(
+        verbose_name='код',
+        max_length=CODE_LENGTH,
+        validators=(
+            MinLengthValidator(CODE_LENGTH),
+        )
+    )
+    # Время когда код, когда код считается истекшим
+    datetime_expire: timezone.datetime = models.DateTimeField(
+        verbose_name='время окончания действия кода'
+    )
+
+    objects: CodeManager = CodeManager()
+
+    def save(self, *args, **kwargs):
+        """
+        Переопределение метода сохранения объекта.
+        Устанавливает время окончания действия кода при создании.
+        """
+        if not self.pk:
+            self.datetime_expire = timezone.now() + self.LIFETIME
+        super().save(*args, **kwargs)
+
+
+class TokenManager(AbstractManager):
+    """
+    Менеджер для refresh-токенов.
+    """
+
+    def find_valid(self, token: str, user: User = None) -> QuerySet['TokenList']:
+        """
+        Находит все действительные токены.
+        """
+        # Получаем текущее время
+        current_time = timezone.now()
+
+        # Проверяем, не истек ли токен
+        queryset: QuerySet[TokenList] = \
+            TokenList.objects.filter(expire_datetime__gt=current_time)
+
+        # Если нужно найти активный refresh-токен для пользователя
+        if user:
+            queryset = queryset.filter(user=user, refresh_token=token)
+
+        return queryset
+
+
+class TokenList(AbstractModel):
+    """
+    Модель для refresh-токенов.
+    """
+
+    user: User = models.ForeignKey(
+        verbose_name='Пользователь',
+        to=User,
+        on_delete=models.CASCADE,
+        related_name='refresh_tokens',
+        null=True,
+        help_text='Связанный пользователь'
+    )
+    refresh_token: str = models.CharField(
+        verbose_name='Токен',
+        max_length=300,
+        null=True
+    )
+    # Время, когда срок действия токена истек
+    expire_datetime: timezone.datetime = models.DateTimeField(
+        verbose_name='Время истечения токена'
+    )
+    # Менеджер
+    objects: TokenManager = TokenManager()
