@@ -9,12 +9,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(BASE_DIR)
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
 
-SECRET_KEY = 'django-insecure-s^%rv81lkvcwvzuu0z2_31sihd0vypux!3zvaiv+pqcb=*uotr'
+SECRET_KEY = decouple.config('SECRET_KEY', cast=str)
 
-DEBUG = True
+DEBUG = decouple.config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = []
-
 
 DJANGO_APPS = [
     'corsheaders',
@@ -97,6 +96,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+ALLOWED_DOMAINS: tuple[str, ...] = ('yandex.ru', 'gmail.com', 'mail.ru',
+                                    'bk.ru', 'yahoo.com', 'hotmail.com',
+                                    'ok.ru', 'tempmail.com', 'cloud.com')
+
 AUTH_USER_MODEL = 'auths.User'
 
 REST_FRAMEWORK = {
@@ -107,11 +110,11 @@ REST_FRAMEWORK = {
 
 
 #-----DATA-BASES--------------------------------------
-DB_NAME = decouple.config('DB_NAME', cast=str)
-DB_USER = decouple.config('DB_USER', cast=str)
-DB_PASS = decouple.config('DB_PASS', cast=str)
-DB_HOST = decouple.config('DB_HOST', cast=str)
-DB_PORT = decouple.config('DB_PORT', cast=str)
+# DB_NAME = decouple.config('DB_NAME', cast=str)
+# DB_USER = decouple.config('DB_USER', cast=str)
+# DB_PASS = decouple.config('DB_PASS', cast=str)
+# DB_HOST = decouple.config('DB_HOST', cast=str)
+# DB_PORT = decouple.config('DB_PORT', cast=str)
 
 DATABASES = {
     'default': {
@@ -153,7 +156,7 @@ EMAIL_HOST_PASSWORD = decouple.config('EMAIL_HOST_PASSWORD', cast=str)
 #--------------------SIMPLE-JWT-----------------------
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": datetime.timedelta(minutes=10),
-    "REFRESH_TOKEN_LIFETIME": datetime.timedelta(minutes=10),
+    "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,

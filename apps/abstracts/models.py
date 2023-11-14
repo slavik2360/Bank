@@ -2,6 +2,7 @@
 from django.db import models
 from django.db.models.query import QuerySet
 from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
 
 # Python
 import datetime
@@ -11,39 +12,31 @@ from typing import Any
 class AbstractManager(models.Manager):
     """Абстрактный менеджер для всех моделей"""
 
-    def get_not_deleted(self) -> QuerySet[Any] | None:
+    def get_not_deleted(self) -> QuerySet[Any]:
         """
-        Получить все модели, где время удаления не является ничем.
+        Получить QuerySet всех объектов модели, 
+        где время удаления не установлено.
         """
-        queryset: QuerySet[Any] = \
-            self.filter(datetime_deleted__isnull=True)
+        return self.filter(datetime_deleted__isnull=True)
 
-        return queryset
+    def get_deleted(self) -> QuerySet[Any]:
+        """
+        Получить QuerySet всех объектов модели, 
+        где время удаления установлено
+        """
+        return self.filter(datetime_deleted__isnull=False)
 
-    def get_deleted(self) -> QuerySet[Any] | None:
+    def get_object_or_none(self, **filter: Any) -> Any | None:
         """
-        Получить все модели, где время удаления не является ничем.
+        Получить объект модели по заданным параметрам или None, 
+        если объект не существует.
         """
-        queryset: QuerySet[Any] = \
-            self.filter(datetime_deleted__isnull=False)
-
-        return queryset
-
-    def get_object_or_none(self, **filter: Any) -> Any:
-        """
-        Получите пользователя или ни чего.
-        """
-        # Попробуйте получить объект по фильтру
         try:
             obj: Any = self.get(**filter)
-
-        # Set obj to None, if there is no such object
-        except Exception as e:
-            print(e)
+        except ObjectDoesNotExist:
             obj = None
 
-        finally:
-            return obj
+        return obj
 
 
 class AbstractModel(models.Model):
