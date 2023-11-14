@@ -19,36 +19,46 @@ from .models import (
 from auths.utils import Sha256Hasher
 
 
-def email_validation_error(email: str, find_user: bool = False,
-                           raise_exception: bool = False
-                           ) -> dict | None:
+def email_validation_error(
+    email: str,
+    find_user: bool = False,
+    allowed_domains: list = settings.ALLOWED_DOMAINS,
+    raise_exception: bool = False
+) -> dict:
     """
-    Возврат ошибки, если электронная почта пользователя 
-    не соответствует указанным критериям.
+    Возвращает ошибку, если электронная почта пользователя не соответствует заданным критериям.
+    * Электронная почта должна начинаться с буквы.
+    * Электронная почта должна включать не менее 2 символов в основной части.
+    * Доменная часть электронной почты должна быть в списке allowed_domains.
+    Если пользователь не найден и find_user=True, поднимается ошибка.
+    Возвращает словарь ошибок или None.
     """
-    pattern: str = r'^[^\d\s]\w+@(\w+\.\w+$)'
+    pattern = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
 
-    try:
-        domain_match: list = re.findall(pattern=pattern, string=email)
-    except re.error:
-        raise ValueError("Неверный шаблон регулярного выражения")
+    # Проводим валидацию электронной почты
+    match = pattern.match(email)
+    error = {'email': []}
 
-    error: dict = {'email': []}
+    if not match:
+        error['email'].append('Электронная почта должна начинаться с буквы \
+                              и содержать не менее двух символов в основной части.')
+    elif match.group(0).split('@')[1] not in allowed_domains:
+        error['email'].append(f'Домен {match.group(0).split("@")[1]} не разрешен.')
 
-    if not domain_match:
-        error['email'].append('Электронная почта должна начинаться с буквы и включать по крайней мере два символа в основной части.')
-
+    # Если флаг find_user включен, проверяем наличие пользователя
     if find_user:
-        user: User | None = User.objects.get_object_or_none(email=email)
+        user = User.objects.get_object_or_none(email=email)
         if user is None:
-            error = {'email': ['Пользователь с такой электронной почтой не найден.']}
+            error = {'email': ['Пользователь с таким email не найден.']}
         elif not user.is_active:
             error = {'email': ['Пользователь неактивен.']}
 
-    if 'email' in error and raise_exception:
+    # Если есть ошибки и флаг raise_exception включен, вызываем исключение
+    if error.get('email') and raise_exception:
         raise ValidationError(error)
 
-    return error if 'email' in error else None
+    # Возвращаем ошибки или None
+    return error if error.get('email') else None
 
 
 def password_validation_error(password1: str,

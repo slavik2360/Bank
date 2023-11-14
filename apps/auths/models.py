@@ -33,7 +33,7 @@ class UserManager(BaseUserManager, AbstractManager):
 
     def create_user(self, email: str, first_name: str,
                     last_name: str, password: str,
-                    password2: str) -> 'User':
+                    password2: str, gender: int) -> 'User':
         """
         Создает и возвращает пользователя с имейлом, паролем и именем.
         """
@@ -43,7 +43,7 @@ class UserManager(BaseUserManager, AbstractManager):
         
         user: 'User' = self.model(email=self.normalize_email(email), first_name=first_name,
                        last_name=last_name, password=password,
-                       password2=password2)
+                       password2=password2, gender=gender)
         user.save(using=self._db)
         return user
 
@@ -60,7 +60,6 @@ class UserManager(BaseUserManager, AbstractManager):
         user.is_superuser = True
         user.is_active = True
         user.is_staff = True
-        user.set_password(password)
         user.save(using=self._db)
         return user
 
@@ -263,6 +262,13 @@ class AccountCode(models.Model):
             self.datetime_expire = timezone.now() + self.LIFETIME
         super().save(*args, **kwargs)
 
+    class Meta:
+        ordering = (
+            'datetime_expire',
+        )
+        verbose_name = 'код активации'
+        verbose_name_plural = 'коды активации'
+
 
 class TokenManager(AbstractManager):
     """
@@ -311,3 +317,10 @@ class TokenList(AbstractModel):
     )
     # Менеджер
     objects: TokenManager = TokenManager()
+
+    class Meta:
+        ordering = (
+            'expire_datetime',
+        )
+        verbose_name = 'список токена'
+        verbose_name_plural = 'список токенов'

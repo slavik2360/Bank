@@ -23,10 +23,10 @@ def generate_code(length: int) -> str:
 
 def hash_string(string: str) -> str:
     """
-    Hash the input string using SHA256.
+    Hasher, использующий SHA256.
     """
     if string is None:
-        raise ValueError("Input string cannot be None")
+        raise ValueError("Входная строка не может быть пустой")
 
     # Генерация соли с использованием secrets
     salt = secrets.token_bytes(32)

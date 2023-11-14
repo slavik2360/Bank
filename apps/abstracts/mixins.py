@@ -2,12 +2,16 @@
 from typing import Any
 
 # DRF
+from rest_framework.request import Request
 from rest_framework.response import Response as JsonResponse
 from rest_framework.validators import ValidationError
+from django.db.models.query import QuerySet
 
-# Django
-from django.db.models import query
+# Simple JWT
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
+# Local
+from auths.models import User
 
 class ResponseMixin:
     """Абстрактный вспомогательный класс для респонсов."""
@@ -42,7 +46,7 @@ class ObjectMixin:
 
     def get_object(
         self,
-        queryset: query.QuerySet,
+        queryset: QuerySet,
         obj_id: str
     ) -> Any:
         """Метод для вытаскивания объекта."""
@@ -56,4 +60,20 @@ class ObjectMixin:
                 }
             )
         return obj
+    
+
+class AccessTokenMixin:
+    """
+    Миксин, который помогает работать с токеном доступа.
+    """
+
+    def get_user(self, request: Request) -> tuple[User, dict | None]:
+        """
+        Используйте только с IsAuthenticated в разрешении_CLASSES.
+        """
+        # Аутентификация токена
+        authenticator: JWTAuthentication = JWTAuthentication()
+        user: User = authenticator.get_user(request.auth)
+
+        return user
 
