@@ -21,8 +21,7 @@ class Command(BaseCommand):
                 first_name='slv',
                 last_name='user',
                 password='qazwsx22',
-                password2='qazwsx22',
-                gender=1
+                password2='qazwsx22'
             )
             print('Пользователь успешно создан')
         except Exception as exc:

@@ -10,7 +10,7 @@ from rest_framework_simplejwt.views import (
 )
 
 
-# from bank.views import GameViewSet
+# from bank.views import BankViewSet
 
 
 router = DefaultRouter()
@@ -21,8 +21,15 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     
-    # Пользовательская API обработка
+    # Пользовательская API обработка для Авторизации
     path('api/v1/auth/', include('auths.urls')),
+
+    # Пользовательская API обработка для Банка
+    # path('api/v1/bank/', include('bank.urls')),
+
+    # Роут для предтавления страниц на сайте
+    path("", include('frontend.urls')),
+
 ]
 
 urlpatterns += static(

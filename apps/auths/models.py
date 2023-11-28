@@ -33,7 +33,7 @@ class UserManager(BaseUserManager, AbstractManager):
 
     def create_user(self, email: str, first_name: str,
                     last_name: str, password: str,
-                    password2: str, gender: int) -> 'User':
+                    password2: str) -> 'User':
         """
         Создает и возвращает пользователя с имейлом, паролем и именем.
         """
@@ -43,7 +43,7 @@ class UserManager(BaseUserManager, AbstractManager):
         
         user: 'User' = self.model(email=self.normalize_email(email), first_name=first_name,
                        last_name=last_name, password=password,
-                       password2=password2, gender=gender)
+                       password2=password2)
         user.save(using=self._db)
         return user
 
@@ -78,13 +78,6 @@ class User(PermissionsMixin, AbstractBaseUser, AbstractModel):
     """
     Кастомная модель пользователя.
     """
-    # Возможный пол пользователя
-    MALE: int = 1
-    FEMALE: int = 2
-    GENDERS: tuple = (
-        (MALE, 'мужчина'),
-        (FEMALE, 'женщина'),
-    )
     # Имя пользователя
     first_name: str = models.CharField(
         verbose_name='имя',
@@ -116,12 +109,6 @@ class User(PermissionsMixin, AbstractBaseUser, AbstractModel):
         validators=(
             MinLengthValidator(7),
         )
-    )
-    # Пол пользователя
-    gender: int = models.SmallIntegerField(
-        verbose_name='пол',
-        choices=GENDERS,
-        null=True
     )
     # Есть ли учетная запись пользователя подтверждена для ее использования
     is_active: bool = models.BooleanField(
@@ -216,7 +203,7 @@ class AccountCode(models.Model):
     Код для пользователей для подтверждения различных действий.
     """
     # Длина активационного кода
-    CODE_LENGTH: int = 6
+    CODE_LENGTH: int = 4
     # Время жизни кода
     LIFETIME: timezone.timedelta = timezone.timedelta(minutes=10)
     # Код активации аккаунта

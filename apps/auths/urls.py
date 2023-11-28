@@ -10,7 +10,8 @@ from .views import (
     ForgotPasswordView,    
     ConfirmPasswordView,   
     RefreshTokenView,      
-    LogoutView,            
+    LogoutView,
+    IsAuthView,            
     UserView,       
 )
 
@@ -31,6 +32,8 @@ urlpatterns = [
     path('refresh-token/', RefreshTokenView.as_view(), name='refresh-token'),
     # Выход пользователя из системы
     path('logout/', LogoutView.as_view(), name='logout'),
+    # Если пользователь был аутентифицирован
+    path('authentication/', IsAuthView.as_view(), name='is-auth'),
     # Получение данных о пользователе
     path('user/', UserView.as_view(), name='user'),
 ]

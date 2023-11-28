@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Активация аккаунта</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="text-align: center;">
+            <img src="https://png.pngtree.com/png-vector/20210301/ourlarge/pngtree-bank-icon-png-image_2997218.jpg" alt="Логотип">
+        </div>
+        <p>Уважаемый(ая) {{ user_fullname }},</p>
+        <p>Мы рады приветствовать вас и сообщаем вам о успешной регистрации.</p>
+        <p>Ваш код активации: <strong>{{ activation_code }}</strong></p>
+        <p>Для завершения регистрации перейдите по следующей ссылке нажав на кнопку:</p>
+        <p style="text-align: center;">
+            <a href="{{ activation_link }}">Активировать аккаунт</a>
+        </p>
+        <p>Если у вас возникнут вопросы или вам потребуется помощь, не стесняйтесь обращаться в нашу службу поддержки.</p>
+        <p>Еще раз спасибо за выбор нашей платформы.</p>
+    </div>
+</body>
+</html>

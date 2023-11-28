@@ -16,7 +16,6 @@ DEBUG = decouple.config('DEBUG', cast=bool)
 ALLOWED_HOSTS = []
 
 DJANGO_APPS = [
-    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -24,6 +23,7 @@ DJANGO_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
     'django_celery_results',
@@ -31,7 +31,8 @@ DJANGO_APPS = [
 PROJECT_APPS = [
     'bank.apps.BankConfig',
     'auths.apps.AuthsConfig',
-    'abstracts.apps.AbstractsConfig'
+    'abstracts.apps.AbstractsConfig',
+    'frontend.apps.FrontendConfig',
 ]
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS
 
@@ -51,7 +52,7 @@ ROOT_URLCONF = 'settings.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -89,10 +90,10 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-MEDIA_URL = 'media/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -101,6 +102,7 @@ ALLOWED_DOMAINS: tuple[str, ...] = ('yandex.ru', 'gmail.com', 'mail.ru',
                                     'ok.ru', 'tempmail.com', 'cloud.com')
 
 AUTH_USER_MODEL = 'auths.User'
+# APPEND_SLASH = False
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

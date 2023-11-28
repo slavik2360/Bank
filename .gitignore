@@ -3,5 +3,16 @@
 env
 env/
 
+*.pyc
+*.pyo
+*.env
+*.log
+*.sqlite
+*.sqlite3
+*.sqlite3-journal
+
+.isort.cfg
+.idea
+.vscode
 # Python import cache
 __pycache__/

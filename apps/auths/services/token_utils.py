@@ -13,7 +13,7 @@ from auths.models import TokenList
 from auths.utils import Sha256Hasher
 
 
-def check_refresh_token_validity(refresh_token: str) -> bool:
+def check_refresh_token(refresh_token: str) -> bool:
     """
     Проверьте, зарегистрирован ли обновление токена в базе данных.
     """

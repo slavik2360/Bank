@@ -28,7 +28,6 @@ from auths.validators import (
     login_data_validation_error,
     user_code_validation,
     refresh_token_validation_error,
-    password_recovery_validation_error,
     old_password_validation_error,
 )
 
@@ -43,7 +42,7 @@ class RegistrateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email',
-                  'password', 'password2', 'gender')
+                  'password', 'password2')
 
     def validate(self, attrs: dict) -> dict:
         """Валидация данных."""
@@ -269,31 +268,19 @@ class ForgotPasswordSerializer(CustomValidSerializer):
     """
     Сериалайзер для получения кода сброса пароля пользователя.
     """
-
     email: str = serializers.CharField(max_length=60, required=True)
-    last_name: str = serializers.CharField(min_length=1, required=True)
-    first_name: str = serializers.CharField(min_length=1, required=True)
-    gender: int = serializers.IntegerField(required=True)
 
     def validate(self, attrs: dict) -> dict:
         """
         Валидация данных.
         """
         email: str = attrs.get('email')
-        last_name: str = attrs.get('last_name')
-        first_name: str = attrs.get('first_name')
-        gender: int = attrs.get('gender')
 
         # Проверяем, является ли электронная почта допустимой
         email_validation_error(email=email, find_user=True, raise_exception=True)
 
         # Получаем пользователя по электронной почте
         user: User = User.objects.get_object_or_none(email=email)
-
-        # Проверяем валидность данных для сброса пароля
-        password_recovery_validation_error(gender=gender, last_name=last_name,
-                                           user=user, first_name=first_name,
-                                           raise_exception=True)
 
         # Устанавливаем атрибут .user, чтобы использовать его затем в .save()
         self.user = user
@@ -428,6 +415,7 @@ class RefreshTokenSerializer(CustomValidSerializer, AccessTokenMixin):
         return response
 
 class LogoutSerializer(CustomValidSerializer, AccessTokenMixin):
+
     def validate(self, attrs: dict) -> dict:
         """
         Валидация данных выхода из системы.
@@ -464,21 +452,4 @@ class UserSerializer(CustomValidSerializer, AccessTokenMixin):
     first_name: str = serializers.CharField(required=True, max_length=255, label='Имя')
     last_name: str = serializers.CharField(required=True, max_length=255, label='Фамилия')
     email: str = serializers.EmailField(required=True, max_length=160, label='Email')
-    gender: str = serializers.CharField(required=True, label='Пол')
     datetime_created: str = serializers.CharField(required=True, label='Время создания')
-
-    def validate_datetime_created(self, value: str) -> str:
-        """
-        Валидация времени создания пользователя.
-        (Здесь можно добавить специфичные проверки, если необходимо)
-        """
-        return value
-
-    def get_response(self) -> dict:
-        """
-        Возвращение ответа на запрос пользователя.
-        """
-        response: dict = {
-            'data': 'Данные пользователя успешно получены.'
-        }
-        return response

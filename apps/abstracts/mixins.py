@@ -67,7 +67,7 @@ class AccessTokenMixin:
     Миксин, который помогает работать с токеном доступа.
     """
 
-    def get_user(self, request: Request) -> tuple[User, dict | None]:
+    def get_user(self, request: Request) -> User:
         """
         Используйте только с IsAuthenticated в разрешении_CLASSES.
         """

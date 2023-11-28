@@ -1,0 +1,31 @@
+<nav class="navigation-bar">
+    <div class="container">
+        <ul>
+            <li class="navbar-logo">
+                <a href="/">
+                    <img src="/media/Bank.png" alt="Bank Logo" id="navbar-logo-img">
+                </a>
+            </li>
+            <li class="navbar-menu" id="contact">
+                <a href="mailto:salvik2360@gmail.com" target="_blank">
+                    <div class="navbar-link">Контакты</div>
+                </a>
+            </li>
+            <li class="navbar-menu" id="login">
+                <a href="{% url 'login' %}">
+                    <div class="navbar-link">Войти</div>
+                </a>
+            </li>
+            <li class="navbar-menu" id="reg">
+                <a href="{% url 'registration' %}">
+                    <div class="navbar-link">Зарегистрироваться</div>
+                </a>
+            </li>
+            <li class="navbar-menu" id="acc-ver">
+                <a href="">
+                    <div class="navbar-link">Активировать аккаунт</div>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
