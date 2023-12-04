@@ -24,7 +24,6 @@ def user_post_save(
         instance.set_password(instance.password)
         instance.password2 = instance.password
         instance.save(update_fields=('password', 'password2'))
-        print('Пароль успешно захеширован')
 
 
 @receiver(signal=pre_save, sender=AccountCode)
@@ -36,7 +35,7 @@ def accountcode_pre_save(instance: AccountCode, **kwargs: Any) -> None:
     # User
     user: User = instance.user
 
-    # Проверка типа кода
+    # Проверка типов кода
     if instance.code_type == AccountCode.ACCOUNT_ACTIVATION:
         # Тема письма
         subject: str = 'Активация Аккаунта'
@@ -44,7 +43,7 @@ def accountcode_pre_save(instance: AccountCode, **kwargs: Any) -> None:
         context = {
             'user_fullname': user.fullname,
             'activation_code': instance.code,
-            'activation_link': f'http://127.0.0.1:8000/activate/{user.email}/',
+            'activation_link': f'http://127.0.0.1:8000/account/activate/{user.email}/',
         }
         message: str = render_to_string('activation_email_message.html', context)
 
@@ -55,6 +54,7 @@ def accountcode_pre_save(instance: AccountCode, **kwargs: Any) -> None:
         context = {
             'user_fullname': user.fullname,
             'activation_code': instance.code,
+            'activation_link' : f'http://127.0.0.1:8000/reset-password/{user.email}/'
         }
         message: str = render_to_string('fogot_password_message.html', context)
 

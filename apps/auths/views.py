@@ -5,7 +5,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework_simplejwt.tokens import RefreshToken
 
 # Local
 from abstracts.mixins import AccessTokenMixin
@@ -16,7 +15,7 @@ from auths.serializers import (
     ActivateAccountSerializer,
     ChangePasswordSerializer,
     ForgotPasswordSerializer,
-    ConfirmPasswordSerializer,
+    ResetPasswordSerializer,
     RefreshTokenSerializer,
     LogoutSerializer,
     UserSerializer,
@@ -32,17 +31,7 @@ class RegisterUserView(APIView):
         serializer.save()
         response_data = serializer.get_response()
         return Response(response_data, status=status.HTTP_201_CREATED)
-
-class LoginUserView(APIView):
-    """
-    Эндпойнт для входа пользователя в систему.
-    """
-    def post(self, request: Request) -> Response:
-        serializer = LoginUserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        response_data = serializer.get_response()
-        return Response(response_data, status=status.HTTP_200_OK)
+    
 
 class ActivateAccountView(APIView):
     """
@@ -55,6 +44,31 @@ class ActivateAccountView(APIView):
         response_data = serializer.get_response()
         return Response(response_data, status=status.HTTP_200_OK)
 
+
+class LoginUserView(APIView):
+    """
+    Эндпойнт для входа пользователя в систему.
+    """
+    def post(self, request: Request) -> Response:
+        serializer = LoginUserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        response_data = serializer.get_response()
+        return Response(response_data, status=status.HTTP_200_OK)
+
+
+class RefreshTokenView(APIView):
+    """
+    Эндпойнт для обновления токена доступа пользователя.
+    """
+    def post(self, request: Request) -> Response:
+        serializer = RefreshTokenSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        response_data = serializer.get_response()
+        return Response(response_data, status=status.HTTP_200_OK)
+    
+
 class ChangePasswordView(APIView):
     """
     Эндпойнт для изменения пароля пользователя.
@@ -65,6 +79,7 @@ class ChangePasswordView(APIView):
         serializer.save()
         response_data = serializer.get_response()
         return Response(response_data, status=status.HTTP_200_OK)
+
 
 class ForgotPasswordView(APIView):
     """
@@ -77,42 +92,23 @@ class ForgotPasswordView(APIView):
         response_data = serializer.get_response()
         return Response(response_data, status=status.HTTP_200_OK)
 
-class ConfirmPasswordView(APIView):
+
+class ResetPasswordView(APIView):
     """
     Эндпойнт для подтверждения смены пароля пользователя.
     """
     def post(self, request: Request) -> Response:
-        serializer = ConfirmPasswordSerializer(data=request.data)
+        serializer = ResetPasswordSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         response_data = serializer.get_response()
         return Response(response_data, status=status.HTTP_200_OK)
 
-class RefreshTokenView(APIView):
-    """
-    Эндпойнт для обновления токена доступа пользователя.
-    """
-    def post(self, request: Request) -> Response:
-        serializer = RefreshTokenSerializer(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        response_data = serializer.get_response()
-        return Response(response_data, status=status.HTTP_200_OK)
-
-class LogoutView(APIView):
-    """
-    Эндпойнт для выхода пользователя из системы.
-    """
-    def post(self, request: Request) -> Response:
-        serializer = LogoutSerializer(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        response_data = serializer.get_response()
-        return Response(response_data, status=status.HTTP_200_OK)
 
 class UserView(GenericAPIView, AccessTokenMixin):
     """
     Эндпойнт для получения данных о пользователе.
+    Доступ только при авторизации.
     """
 
     permission_classes: tuple = (IsAuthenticated,)
@@ -148,3 +144,15 @@ class IsAuthView(GenericAPIView, AccessTokenMixin):
             return Response(status=400)
 
         return Response(status=self.success_status)
+    
+
+class LogoutView(APIView):
+    """
+    Эндпойнт для выхода пользователя из системы.
+    """
+    def post(self, request: Request) -> Response:
+        serializer = LogoutSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        response_data = serializer.build_response()
+        return Response(response_data, status=status.HTTP_200_OK)

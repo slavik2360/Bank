@@ -6,10 +6,7 @@ from django.contrib.auth.base_user import (
     BaseUserManager,
     AbstractBaseUser,
 )
-from django.core.validators import (
-    MinLengthValidator,
-    MaxLengthValidator
-)
+from django.core.validators import MinLengthValidator
 from django.utils import timezone
 from django.conf import settings
 import jwt
@@ -185,7 +182,7 @@ class CodeManager(models.Manager):
     Менеджер для управления кодами.
     """
 
-    def extended_filter(self, expired: bool, **kwargs: dict) -> QuerySet['AccountCode']:
+    def extended_filter(self, expired: bool, **kwargs: dict) -> 'AccountCode':
         """
         Расширенный фильтр для управления кодами.
 
@@ -262,7 +259,7 @@ class TokenManager(AbstractManager):
     Менеджер для refresh-токенов.
     """
 
-    def find_valid(self, token: str, user: User = None) -> QuerySet['TokenList']:
+    def find_valid(self, token: str, user: User = None) -> 'TokenList':
         """
         Находит все действительные токены.
         """

@@ -1,12 +1,51 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title %}Activate Account{% endblock %}
+{% load static %}
+
+{% block title %}Активация Аккаунта{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/account-activation.css' %}">
+{% endblock %}
 
 {% block content %}
-    <h1>Activate Account</h1>
-    <form id="activate-account-form">
-        <!-- Ваш код формы здесь -->
-    </form>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="{% static 'activate_account.js' %}"></script>
+    {% include "nav.html" %}
+    <div class="verification">
+        <div class="verification-container">
+            <div class="verification-block">
+                <div id="divZero" class="content">
+                    <i class="bi bi-envelope-at-fill" id="envelope">
+                        <p>ПРОВЕРЬТЕ СВОЙ АДРЕС ЭЛЕКТРОННОЙ ПОЧТЫ</p>
+                    </i>
+                    <hr>
+                </div>
+                <div id="divTwo" class="content">
+                    Пожалуйста, проверьте свою почту и введите
+                    код ниже, чтобы активировать ваш аккаут.
+                </div>
+                <div id="divThree" class="content">
+                    <div class="input-box">
+                        <div>
+                            <input type="text" class="square" maxlength="4" name="code">
+                        </div>
+                        <div>
+                            <input type="text" class="square" maxlength="3">
+                        </div>
+                        <div>
+                            <input type="text" class="square" maxlength="2">
+                        </div>
+                        <div>
+                            <input type="text" class="square" maxlength="1">
+                        </div>
+                    </div>
+                </div>
+                <div id="divFour" class="content">
+                    <button id="verify"><p>Активировать</p></button>
+                </div>
+            </div>
+        </div>
+        <div class="hints-container">
+        </div>
+    </div>
+    <script src="{% static 'js/activation/account-activate.js' %}"></script>
 {% endblock %}

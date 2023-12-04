@@ -45,7 +45,7 @@ def add_token_to_db(**kwargs: Any) -> None:
     datetime_expire: datetime.datetime =\
         timezone.now() + USER_SETTINGS.get('REFRESH_TOKEN_LIFETIME')
 
-    # Определите Хашер
+    # Хашер
     hasher: Sha256Hasher = Sha256Hasher()
     token: str = kwargs.get('token')
 

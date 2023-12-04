@@ -14,7 +14,9 @@ class BaseView(View):
 
     def get(
         self, 
-        request: WSGIRequest
+        request: WSGIRequest,
+        *args: tuple, 
+        **kwargs: dict
     ) -> HttpResponse:
         """
         Метод, GET.
@@ -27,11 +29,58 @@ class HomePageView(BaseView):
     Домашняя страница.
     """
 
-    template: str = 'index.html'
-    
+    template: str = 'home.html'
+
+
 class RegistrationView(BaseView):
     """
-    Страница Регистрации
+    Страница Регистрации.
     """
 
     template: str = 'registration.html'
+
+
+class LoginView(BaseView):
+    """
+    Авторизация пользователя.
+    """
+
+    template: str = 'login.html'
+
+
+class ActivationBaseView(BaseView):
+    """
+    Activate user account.
+    """
+
+    template: str = 'base_activate.html'
+
+
+class AccountActivationView(BaseView):
+    """
+    Активация учетной записи пользователя.
+    """
+
+    template: str = 'activate_account.html'
+
+
+class ForgotPasswordView(BaseView):
+    """
+    Восстановление пароля.
+    """
+
+    template: str = 'forgot-password.html'
+
+class ResetPasswordView(BaseView):
+    """
+    Смена пароля.
+    """
+
+    template: str = 'reset-password.html'
+
+class ProfileView(BaseView):
+    """
+    Профиль пользователя.
+    """
+
+    template: str = 'profile.html'

@@ -64,7 +64,7 @@ class Sha256Hasher(BaseHasher):
             raise ValueError("Входная строка не может быть пустой")
 
         # Генерация соли с использованием secrets
-        salt = secrets.token_bytes(32)
+        salt = settings.SECRET_KEY.encode('utf-8')
 
         # Создание объекта хеширования с использованием SHA256
         hash_object = hashlib.new('sha256')

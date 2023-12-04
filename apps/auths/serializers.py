@@ -102,6 +102,56 @@ class RegistrateUserSerializer(serializers.ModelSerializer):
         return response
 
 
+class ActivateAccountSerializer(CustomValidSerializer):
+    """
+    Сериализатор для представления активации учетной записи.
+    """
+
+    email: str = serializers.CharField(max_length=60, required=True)
+    code: str = serializers.CharField(max_length=50, required=True)
+
+    def validate(self, attrs: dict) -> dict:
+        """
+        Валидация данных.
+        """
+        email: str = attrs.get('email')
+        code: str = attrs.get('code')
+
+        # Поиск пользователя с этим email
+        user: User | None = User.objects.get_object_or_none(email=email)
+
+        # Проверка, есть ли у пользователя такой код
+        code_type: int = AccountCode.ACCOUNT_ACTIVATION
+        code: AccountCode = user_code_validation(user=user, code=code, code_type=code_type, raise_exception=True)
+
+        # Установка атрибута .user для использования его в .save()
+        self.user = user
+
+        # Удаление использованного кода
+        code.datetime_expire = timezone.now()
+        code.save(update_fields=('datetime_expire',))
+
+        return attrs
+
+    def save(self) -> None:
+        """
+        Установка значения `is_acitve = True` и сохранение данных.
+        """
+        self.user.is_active = True
+
+        # Активация учетной записи пользователя
+        self.user.save(update_fields=('is_active',))
+
+    def get_response(self) -> dict:
+        """
+        Возврат ответа представлению.
+        """
+        response: dict = {
+            'data': 'Вы успешно подтвердили свою учетную запись.'
+        }
+        return response
+    
+
 class LoginUserSerializer(CustomValidSerializer):
     """
     Сериализатор пользователя для входа в систему.
@@ -154,52 +204,43 @@ class LoginUserSerializer(CustomValidSerializer):
         return response
 
 
-class ActivateAccountSerializer(CustomValidSerializer):
+class RefreshTokenSerializer(CustomValidSerializer, AccessTokenMixin):
     """
-    Сериализатор для представления активации учетной записи.
+    Сериализатор для обновления токена.
     """
-
-    email: str = serializers.CharField(max_length=60, required=True)
-    code: str = serializers.CharField(max_length=50, required=True)
 
     def validate(self, attrs: dict) -> dict:
         """
         Валидация данных.
         """
-        email: str = attrs.get('email')
-        code: str = attrs.get('code')
+        # Получаем refresh токен из куков запроса
+        request = self.context.get('request')
+        token: str = request.COOKIES.get('refresh_token')
 
-        # Поиск пользователя с этим email
-        user: User | None = User.objects.get_object_or_none(email=email)
+        # Проверяем данные refresh токена
+        refresh_token_validation_error(token=token, raise_exception=True)
 
-        # Проверка, есть ли у пользователя такой код
-        code_type: int = AccountCode.ACCOUNT_ACTIVATION
-        code: AccountCode = user_code_validation(user=user, code=code, code_type=code_type, raise_exception=True)
-
-        # Установка атрибута .user для использования его в .save()
-        self.user = user
-
-        # Удаление использованного кода
-        code.datetime_expire = timezone.now()
-        code.save(update_fields=('datetime_expire',))
+        # Устанавливаем .token, чтобы использовать его затем в .save()
+        self.token = token
 
         return attrs
 
     def save(self) -> None:
         """
-        Установка значения `is_acitve = True` и сохранение данных.
+        Сохранение данных.
         """
-        self.user.is_active = True
+        # Создаем объект RefreshToken, используя refresh токен
+        token: RefreshToken = RefreshToken(token=self.token)
 
-        # Активация учетной записи пользователя
-        self.user.save(update_fields=('is_active',))
+        # Получаем access токен
+        self.access_token = token.access_token
 
     def get_response(self) -> dict:
         """
         Возврат ответа представлению.
         """
         response: dict = {
-            'data': 'Вы успешно подтвердили свою учетную запись.'
+            'access': str(self.access_token)
         }
         return response
 
@@ -313,13 +354,13 @@ class ForgotPasswordSerializer(CustomValidSerializer):
         return response
 
 
-class ConfirmPasswordSerializer(CustomValidSerializer):
+class ResetPasswordSerializer(CustomValidSerializer):
     """
-    Подтвердить код для изменения пароля пользователя.
+    Сериалайзер для изменения пароля пользователя.
     """
 
-    code: str = serializers.CharField(max_length=AccountCode.CODE_LENGTH, required=True)
     email: str = serializers.CharField(max_length=60, required=True)
+    code: str = serializers.CharField(max_length=AccountCode.CODE_LENGTH, required=True)
     password: str = serializers.CharField(max_length=128, required=True)
     password2: str = serializers.CharField(max_length=128, required=True)
 
@@ -327,10 +368,10 @@ class ConfirmPasswordSerializer(CustomValidSerializer):
         """
         Валидация данных.
         """
-        password: str = attrs.get('password')
-        password2: str = attrs.get('password2')
         email: str = attrs.get('email')
         code: str = attrs.get('code')
+        password: str = attrs.get('password')
+        password2: str = attrs.get('password2')
 
         # Проверяем, является ли электронная почта допустимой
         email_validation_error(email=email, find_user=True, raise_exception=True)
@@ -374,46 +415,6 @@ class ConfirmPasswordSerializer(CustomValidSerializer):
         return response
 
 
-
-class RefreshTokenSerializer(CustomValidSerializer, AccessTokenMixin):
-    """
-    Сериализатор для обновления токена.
-    """
-
-    def validate(self, attrs: dict) -> dict:
-        """
-        Валидация данных.
-        """
-        # Получаем refresh токен из куков запроса
-        token: str = attrs['refresh_token']
-
-        # Проверяем данные refresh токена
-        refresh_token_validation_error(token=token, raise_exception=True)
-
-        # Устанавливаем .token, чтобы использовать его затем в .save()
-        self.token = token
-
-        return attrs
-
-    def save(self) -> None:
-        """
-        Сохранение данных.
-        """
-        # Создаем объект RefreshToken, используя refresh токен
-        token: RefreshToken = RefreshToken(token=self.token)
-
-        # Получаем access токен
-        self.access_token = token.access_token
-
-    def get_response(self) -> dict:
-        """
-        Возврат ответа представлению.
-        """
-        response: dict = {
-            'access': str(self.access_token)
-        }
-        return response
-
 class LogoutSerializer(CustomValidSerializer, AccessTokenMixin):
 
     def validate(self, attrs: dict) -> dict:
@@ -421,28 +422,38 @@ class LogoutSerializer(CustomValidSerializer, AccessTokenMixin):
         Валидация данных выхода из системы.
         """
         # Получаем пользователя из токена
-        logged_out_user = self.get_user(request=self.request)
+        request = self.context.get('request')
+        logged_out_user = self.get_user(request=request)
 
-        # Удаляем все токены пользователя
-        TokenList.objects.filter(user=logged_out_user).delete()
+        # Удаляем все токены и коды пользователя
+        self.delete_user_tokens_and_codes(logged_out_user)
 
         # Возвращаем атрибуты, хотя в данном случае они не используются
         return attrs
 
+    def delete_user_tokens_and_codes(self, user: User) -> None:
+        """
+        Удаление всех токенов и кодов пользователя.
+        """
+        TokenList.objects.filter(user=user).delete()
+        AccountCode.objects.filter(user=user).delete()
+        
     def save(self) -> None:
         """
         Сохранение данных. (В данном случае метод не используется, оставлен для совместимости.)
         """
         pass
 
-    def get_response(self) -> dict:
+    def build_response(self) -> dict:
         """
-        Возвращение ответа на запрос выхода из системы.
+        Формирование ответа на запрос выхода из системы.
         """
         response: dict = {
             'data': 'Вы успешно вышли из системы.'
         }
         return response
+
+
 
 
 class UserSerializer(CustomValidSerializer, AccessTokenMixin):

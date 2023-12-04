@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+    {% include "profile_nav.html" %}
+    <div class="user-information">
+        <div class="user-container">
+            <div class="column" id="col-1">
+                <h1 style="color: orangered;">Страница Профиля</h1>
+                <div id="avatar"></div>
+                <div>
+                    <p class="user-fullname"></p>
+                    <p class="user-email"></p>
+                </div>
+                <p class="user-join">Дата создания:</p>
+                <a href="/transaction/">Перевод</a>
+                <a href="/convert/">Конвертер Валюты</a>
+            </div>
+            <div class="column" id="col-2">
+                <div class="new-card">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/check-auth.js' %}"></script>
+    <script src="{% static 'js/profile/profile.js' %}"></script>
+{% endblock %}

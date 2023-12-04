@@ -1,4 +1,6 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% load static %}
 
 {% block title %}Регистрация{% endblock %}
 
@@ -7,19 +9,76 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Регистрация</h1>
-    <form id="registrationForm">
-        <label for="first_name">Имя:</label>
-        <input type="text" id="first_name" name="first_name" required>
-
-        <!-- Добавьте другие поля формы здесь -->
-
-        <button type="submit">Зарегистрироваться</button>
-    </form>
-
-    <p>Уже есть аккаунт? <a href="{% url 'login' %}">Войдите здесь</a>.</p>
-{% endblock %}
-
-{% block script %}
-    <script src="{% static 'js/registration.js' %}"></script>
+    {% include "nav.html" %}
+    <div class="registration">
+        <div class="registration-container">
+            <form class="registration-form">
+                <p class="registration-p">Регистрация</p>
+                <div>
+                    <i name="outer" class="bi bi-person-fill"
+                       id="first_name_icon">
+                        <input type="text" placeholder="Имя"
+                               name="first_name" id="first_name"
+                               required>
+                        <i class="bi bi-exclamation-diamond"
+                           name="inner" id="first_name_validator"></i>
+                    </i>
+                </div>
+                <div>
+                    <i name="outer" class="bi bi-person-fill"
+                       id="last_name_icon">
+                        <input type="text" placeholder="Фамилия"
+                               name="last_name" id="last_name"
+                               required>
+                        <i class="bi bi-exclamation-diamond"
+                           name="inner" id="last_name_validator"></i>
+                    </i>
+                </div>
+                <div>
+                    <i name="outer" class="bi bi-envelope-at-fill"
+                       id="email_icon">
+                        <input type="text" name="email" id="email"
+                               placeholder="Email" required>
+                        <i class="bi bi-exclamation-diamond"
+                           name="inner" id="email_validator"></i>
+                    </i>
+                </div>
+                <div>
+                    <i name="outer" class="bi bi-unlock-fill"
+                       id="password_icon">
+                        <input type="password" placeholder="Пароль"
+                               name="password" id="password"
+                               required>
+                        <i class="bi bi-exclamation-diamond"
+                           name="inner" id="password_validator"></i>
+                        <i class="bi bi-eye-slash" name="eye"
+                           id="password_eye"></i>
+                    </i>
+                </div>
+                <div>
+                    <i name="outer" class="bi bi-unlock-fill"
+                       id="password2_icon">
+                        <input type="password" placeholder="Повторите Пароль"
+                               name="password2" id="password2" required>
+                        <i class="bi bi-exclamation-diamond"
+                           name="inner" id="password2_validator"></i>
+                           <i class="bi bi-eye-slash" name="eye"
+                              id="password2_eye"></i>
+                    </i>
+                </div>
+                <button id="register" type="submit"><p>Зарегистрироваться</p></button>
+                <p class="form-login">
+                    У вас Уже есть аккаунт?
+                    <a href="/login/">Войти</a>
+                </p>
+            </form>
+        </div>
+    </div>
+    <div class="hints">
+        <div class="hints-container">
+            <p>Нажмите на какое-либо поле, чтобы просмотреть подсказки</p>
+        </div>
+    </div>
+    <script src="{% static 'js/reg/registration.js' %}"></script>
+    <script src="{% static 'js/reg/clue.js' %}"></script>
 {% endblock %}

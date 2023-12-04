@@ -36,8 +36,8 @@ PROJECT_APPS = [
 ]
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS
 
+
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -45,6 +45,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'middlewares.secure_middleware.SecureMiddleware',
 ]
 
 ROOT_URLCONF = 'settings.urls'
@@ -98,18 +100,24 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ALLOWED_DOMAINS: tuple[str, ...] = ('yandex.ru', 'gmail.com', 'mail.ru',
-                                    'bk.ru', 'yahoo.com', 'hotmail.com',
-                                    'ok.ru', 'tempmail.com', 'cloud.com')
+                                    'bk.ru','ok.ru', 'cloud.com')
 
 AUTH_USER_MODEL = 'auths.User'
-# APPEND_SLASH = False
+APPEND_SLASH = False
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
+#-----CORS--------------------------------------
+CORS_ALLOW_ALL_ORIGINS = False
 
+CORS_ALLOWED_ORIGINS = (
+    'http://127.0.0.1',
+)
+
+# CORS_URLS_REGEX = r'^/api/.*$'
 
 #-----DATA-BASES--------------------------------------
 # DB_NAME = decouple.config('DB_NAME', cast=str)
@@ -157,7 +165,7 @@ EMAIL_HOST_PASSWORD = decouple.config('EMAIL_HOST_PASSWORD', cast=str)
 
 #--------------------SIMPLE-JWT-----------------------
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(minutes=10),
+    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
@@ -172,7 +180,7 @@ SIMPLE_JWT = {
     "JWK_URL": None,
     "LEEWAY": 0,
 
-    "AUTH_HEADER_TYPES": ("Step",),
+    "AUTH_HEADER_TYPES": ('Bearer',),
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
@@ -185,7 +193,7 @@ SIMPLE_JWT = {
     "JTI_CLAIM": "jti",
 
     "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
-    "SLIDING_TOKEN_LIFETIME": datetime.timedelta(minutes=5),
+    "SLIDING_TOKEN_LIFETIME": datetime.timedelta(minutes=60),
     "SLIDING_TOKEN_REFRESH_LIFETIME": datetime.timedelta(days=1),
 
     "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",

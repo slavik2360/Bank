@@ -1,14 +1,12 @@
 # Django
 from django.core.exceptions import ValidationError
 from django.db.models.query import QuerySet
-from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.contrib.auth import authenticate
 
 # Python
 import re
 from typing import Union, Literal
-
 
 # Local
 from .models import (
@@ -103,51 +101,31 @@ def password_validation_error(password1: str,
     return error['password'] or None
 
 
-def login_data_validation_error(email: str, password: str, user: User,
-                                raise_exception: bool = False
-                                ) -> dict | None:
+def login_data_validation_error(email: str, password: str, user: User, raise_exception: bool = False) -> dict | None:
     """
-    Возвращает ошибку, если данные для входа в систему недействительны. 
-    Проверяет, если электронная почта и пароль не пусты, 
+    Возвращает ошибку, если данные для входа в систему недействительны.
+    Проверяет, если электронная почта и пароль не пусты,
     и пользователь аутентифицирован.
     """
     error: dict = {}
-    is_admin: bool = False
 
-    # Если пользователь найден
-    if user:
-        # Определить, является ли пользователь администратором
-        is_admin = user.is_admin
-
-        # Создать словарь для подошибок
-        suberror: dict = {'email': []}
-
-        # Если пользователь не является администратором и флаг is_admin включен
-        if not user.is_admin and is_admin is True:
-            err: str = 'Панель администратора доступна только администраторам.'
-            suberror['email'].append(err)
-
-        # Если пользователь не активен
-        if user.is_active is False:
-            err: str = 'Необходимо активировать аккаунт.'
-            suberror['email'].append(err)
-
-        # Если есть подошибки, добавить их в основной словарь ошибок
-        if suberror.get('email'):
-            error.update(suberror)
-
-    # Если электронная почта пуста
+    # Проверяем электронную почту
     if not email:
         error.update({'email': ['Это поле обязательно для заполнения.']})
+    elif user is None:
+        error.update({'email': ['Пользователь не найден.']})
+    elif user.is_active is False:
+        error.update({'email': ['Необходимо активировать аккаунт.']})
 
-    # Если пароль пуст
+    # Проверяем пароль
     if not password:
         error.update({'password': ['Это поле обязательно для заполнения.']})
-
+        
     # Если пользователь не найден, а электронная почта и пароль указаны
     if user is None and email and password:
-        error.update({'email': ['Пользователь не найден.']})
-        error.update({'password': ['Пользователь не найден.']})
+        error.update({'email': ['Проверьте email или пароль.']})
+        # Удаляем старое сообщение об ошибке пароля
+        error.pop('password', None)
 
     # Если есть ошибки и флаг raise_exception включен, вызвать исключение
     if error and raise_exception is True:
@@ -222,12 +200,12 @@ def user_code_validation(user: User, code: str, code_type: int,
 
     # Если пользователя нет, должна возникнуть только ошибка о том, что пользователь не найден
     if user is None:
-        error = {'email': ['Пользователь с этим адресом электронной почты не найден.']}
+        error = {'email': ['Пользователь с таким адресом электронной почты не найден.']}
 
     # Если пользователь активен, должна возникнуть только ошибка
     # о том, что пользователь уже подтвержден
     elif user.is_active and code_type == AccountCode.ACCOUNT_ACTIVATION:
-        error = {'email': ['Пользователь с этим адресом электронной почты уже подтвержден.']}
+        error = {'email': ['Пользователь с таким адресом электронной почты уже подтвержден.']}
 
     # Если есть ошибки и флаг raise_exception включен, вызвать исключение
     if raise_exception is True:
@@ -237,6 +215,7 @@ def user_code_validation(user: User, code: str, code_type: int,
 
     # Вернуть ошибки или None
     return error if error else None
+
 
 def password_recovery_validation_error(user: User, first_name: str,
                                        last_name: str, raise_exception: bool = False
@@ -280,7 +259,7 @@ def old_password_validation_error(user: User, password: str,
     # Вернуть ошибки или None
     return error if error else None
 
-def refresh_token_validation_error(token: str, ip: str, fingerprint: str,
+def refresh_token_validation_error(token: str,
                                    raise_exception: bool = False
                                    ) -> dict | None:
     """

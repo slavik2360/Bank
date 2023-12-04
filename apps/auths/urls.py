@@ -5,10 +5,9 @@ from django.urls import path
 from .views import (
     RegisterUserView,      
     LoginUserView,         
-    ActivateAccountView,  
-    ChangePasswordView,    
+    ActivateAccountView,    
     ForgotPasswordView,    
-    ConfirmPasswordView,   
+    ResetPasswordView,   
     RefreshTokenView,      
     LogoutView,
     IsAuthView,            
@@ -17,23 +16,21 @@ from .views import (
 
 urlpatterns = [
     # Регистрация нового пользователя
-    path('register/', RegisterUserView.as_view(), name='register'),
-    # Вход пользователя в систему
-    path('login/', LoginUserView.as_view(), name='login'),
+    path('register/', RegisterUserView.as_view()),
     # Активация учетной записи пользователя
-    path('activate/', ActivateAccountView.as_view(), name='activate'),
-    # Изменение пароля пользователя
-    path('change-password/', ChangePasswordView.as_view(), name='change-password'),
-    # Запрос на сброс пароля пользователя
-    path('forgot-password/', ForgotPasswordView.as_view(), name='forgot-password'),
-    # Подтверждение смены пароля пользователя
-    path('confirm-password/', ConfirmPasswordView.as_view(), name='confirm-password'),
+    path('activate/', ActivateAccountView.as_view()),
+    # Вход пользователя в систему
+    path('login/', LoginUserView.as_view()),
     # Обновление токена доступа
-    path('refresh-token/', RefreshTokenView.as_view(), name='refresh-token'),
-    # Выход пользователя из системы
-    path('logout/', LogoutView.as_view(), name='logout'),
-    # Если пользователь был аутентифицирован
-    path('authentication/', IsAuthView.as_view(), name='is-auth'),
+    path('login/token/', RefreshTokenView.as_view()),
+    # Запрос на сброс пароля пользователя
+    path('forgot-password/', ForgotPasswordView.as_view()),
+    # Подтверждение смены пароля пользователя
+    path('reset-password/', ResetPasswordView.as_view()),
+    # Проверка сли пользователь аутентифицирован
+    path('is-auth/', IsAuthView.as_view(), name='is-auth'),
     # Получение данных о пользователе
-    path('user/', UserView.as_view(), name='user'),
+    path('user/', UserView.as_view()),
+    # Выход пользователя из системы
+    path('logout/', LogoutView.as_view()),
 ]
