@@ -400,6 +400,7 @@ class ResetPasswordSerializer(CustomValidSerializer):
         Сохранение данных.
         """
         user: User = self.user
+        user.is_active = True
         password: str = self.validated_data.get('password')
         user.set_password(password)
         user.password2 = user.password

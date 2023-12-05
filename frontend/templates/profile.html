@@ -12,19 +12,67 @@
     {% include "profile_nav.html" %}
     <div class="user-information">
         <div class="user-container">
-            <div class="column" id="col-1">
-                <h1 style="color: orangered;">Страница Профиля</h1>
-                <div id="avatar"></div>
-                <div>
-                    <p class="user-fullname"></p>
-                    <p class="user-email"></p>
-                </div>
-                <p class="user-join">Дата создания:</p>
-                <a href="/transaction/">Перевод</a>
-                <a href="/convert/">Конвертер Валюты</a>
-            </div>
             <div class="column" id="col-2">
                 <div class="new-card">
+                    <button id="new-card-btn"><p>Выпустить виртуальную карту</p></button>
+                </div>
+                <div class="card-container">
+                    <div class="card">
+                        <div class="card-inner">
+                            <div class="front">
+                                <img src="https://i.ibb.co/PYss3yv/map.png" class="map-img">
+                                <div class="row">
+                                    <img src="https://i.ibb.co/G9pDnYJ/chip.png" width="60px">
+                                    <img src="https://i.ibb.co/WHZ3nRJ/visa.png" width="60px">
+                                </div>
+                                <div class="row card-no">
+                                    <p>7777</p>
+                                    <p>7777</p>
+                                    <p>7777</p>
+                                    <p>7777</p>
+                                </div>
+                                <div class="row card-holder">
+                                    <p>ВЛАДЕЛЕЦ</p>
+                                    <p>Blochshenko Vyacheslav</p>
+                                </div>
+                                <div class="row name">
+                                    <p>ГОДЕН ДО</p>
+                                    <p>10 / 25</p>
+                                </div>
+                            </div>
+                            <div class="back">
+                                <img src="https://i.ibb.co/PYss3yv/map.png" class="map-img">
+                                <div class="bar"></div>
+                                <div class="row card-cvv">
+                                    <div>
+                                        <img src="https://i.ibb.co/S6JG8px/pattern.png">
+                                    </div>
+                                    <p>777</p>
+                                </div>
+                                <div class="row card-text">
+                                    <p>Это виртуальная карта с использованием HTML и CSS.Вы также можете спроектировать что -то подобное.</p>
+                                </div>
+                                <div class="row signature">
+                                    <p>BALANCE</p>
+                                    <p>7000₸</p>
+                                    <img src="https://i.ibb.co/WHZ3nRJ/visa.png" width="80px">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="column" id="col-1">
+                <div class="profile-header">
+                    <div id="avatar"></div>
+                    <h1 class="user-fullname"></h1>
+                    <p class="user-email"></p>
+                    <p class="user-join">Дата создания:</p>
+                </div>
+                <div class="profile-links">
+                    <a href="/transaction/">Перевод</a>
+                    <a href="/requisite/">Реквизиты карты</a>
+                    <a href="/convert/">Калькулятор валюты</a>
                 </div>
             </div>
         </div>

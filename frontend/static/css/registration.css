@@ -1,8 +1,7 @@
 body {
     height: 100vh;
     width: 100vw;
-    background: rgb(172, 163, 150);
-    /* background-image: url('/media/backreg.jpg'); */
+    background-image: linear-gradient(45deg, rgb(218, 162, 59), #d5c5cf);
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -26,7 +25,7 @@ body {
 }
 
 .registration-form {
-    background: rgb(142, 140, 140);
+    background: rgb(226, 226, 226);
     height: 500px;
     width: 380px;
     border-radius: 10px;
@@ -63,7 +62,7 @@ body {
 .registration-form i[name="outer"]
 {
     position: relative;
-    color: white;
+    color: rgb(255, 170, 51);
     padding-left: 5px;
     padding-bottom: 3px;
     border-bottom: 1px solid rgb(255, 170, 51);
@@ -100,7 +99,7 @@ body {
     background: transparent;
     border: none;
     outline: none;
-    color: white;
+    color: rgb(26, 26, 26);
     width: 80%;
 }
 
@@ -115,7 +114,7 @@ input:-webkit-autofill {
 
 .registration-form i input:focus::placeholder
 {
-    color: white;
+    color: rgb(26, 26, 26);
 }
 
 .registration-form .registration-p

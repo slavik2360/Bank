@@ -1,11 +1,12 @@
 body
 {
+    height: 100vh;
+    width: 100vw;
+    background-image: linear-gradient(45deg, rgb(218, 162, 59), #d5c5cf);
     display: flex;
-    flex-direction: column;
     align-items: center;
-    background: rgb(172, 163, 150);
+    flex-direction: column;
 }
-
 .login
 {
     width: 100%;
@@ -25,11 +26,10 @@ body
     padding-top: 80px;
 }
 
-
 .left-side
 {
-    border-radius: 5px 0px 0px 5px;
-    background: white;
+    border-radius: 10px;
+    background: rgb(235, 235, 235);
     width: 500px;
     height: 400px;
 }
@@ -91,7 +91,7 @@ body
 
 #divTwo div input
 {
-    background: rgb(229, 229, 229);
+    background: rgb(225, 225, 225);
     height: 80px;
     width: 400px;
     border-radius: 3px;
@@ -201,13 +201,12 @@ label
 
 #btnlog
 {
-    background: white;
+    background: rgb(235, 235, 235); 
     width: 30%;
     height: 35px;
     text-align: center;
     border-radius: 5px;
     border: 1px solid rgb(255, 170, 51);
-
 }
 
 #btnlog:hover
@@ -220,11 +219,11 @@ label
     background: rgb(255, 170, 51);
 }
 
-#btnlog p
-{
+#btnlog p{
     color: rgb(52, 47, 40);
     font-size: large;
     font-weight: bold;
+    margin-top: 3px;
 }
 
 button:focus {

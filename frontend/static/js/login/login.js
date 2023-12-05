@@ -34,9 +34,6 @@ btn.addEventListener("click", (event) => {
             setTimeout(() => {
                 window.location.href = "/account/";
             }, 2000);
-
-            inputEmail.value = "";
-            inputPswrd.value = "";
         })
         .catch((error) => {
             let text = document.querySelector(".info-p");
@@ -47,12 +44,10 @@ btn.addEventListener("click", (event) => {
                         inputEmail.style.border = "1px solid rgb(220, 53, 69)";
                         text.style.color = "rgb(220, 53, 69)";
                         text.innerText = err
-                        inputPswrd.style.border = "1px solid grey";
                     } else if (field === "password") {
                         inputPswrd.style.border = "1px solid rgb(220, 53, 69)";
                         text.style.color = "rgb(220, 53, 69)";
                         text.innerText = err
-                        inputEmail.style.border = "1px solid grey";
                     }else{
                         text.style.color = "rgb(220, 53, 69)";
                         text.innerText = "Произошла ошибка при обращении к серверу";

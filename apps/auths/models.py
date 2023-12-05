@@ -36,7 +36,7 @@ class UserManager(BaseUserManager, AbstractManager):
         """
 
         if email is None:
-            raise TypeError('Users must have an email address.')
+            raise TypeError('У пользователи должен быть адрес электронной почты.')
         
         user: 'User' = self.model(email=self.normalize_email(email), first_name=first_name,
                        last_name=last_name, password=password,
@@ -50,7 +50,7 @@ class UserManager(BaseUserManager, AbstractManager):
         Создает и возввращет пользователя с привилегиями суперадмина.
         """
         if password is None:
-            raise TypeError('Superusers must have a password.')
+            raise TypeError('Администратор должен иметь пароль.')
         
         user: 'User' = self.model(email=self.normalize_email(email), first_name=first_name,
                        last_name=last_name, password=password)

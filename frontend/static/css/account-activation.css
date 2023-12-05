@@ -10,8 +10,7 @@ body
 {
     height: 100vh;
     width: 100vw;
-    background: rgb(172, 163, 150);
-    position: absolute;
+    background: linear-gradient(45deg, rgb(218, 162, 59), #d5c5cf);
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -53,7 +52,8 @@ body
 {
     width: 410px;
     height: 475px;
-    background: white;
+    background: rgb(235, 235, 235);
+    border-radius: 10px;
 }
 
 @media (max-height: 600px)
@@ -118,7 +118,7 @@ body
 {
     width: 300px;
     border: none;
-    border-top: 1px solid rgb(235, 235, 235);
+    border-top: 1px solid rgb(255, 170, 51);
 }
 
 #divZero i p
@@ -196,7 +196,7 @@ input:-webkit-autofill {
 {
     width: 300px;
     height: 40px;
-    background: white;
+    background: rgb(235, 235, 235);
     color: black;
     border-radius: 4px;
     border: 1px solid rgb(255, 170, 51);
@@ -230,7 +230,7 @@ input:-webkit-autofill {
 
 .get-email-input
 {
-    width: 300px;
+    width: 320px;
     padding-left: 5px;
     border-radius: 5px;
     color: rgb(40, 40, 40);

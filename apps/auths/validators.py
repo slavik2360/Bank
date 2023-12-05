@@ -2,7 +2,6 @@
 from django.core.exceptions import ValidationError
 from django.db.models.query import QuerySet
 from django.conf import settings
-from django.contrib.auth import authenticate
 
 # Python
 import re
@@ -23,16 +22,8 @@ def email_validation_error(
     allowed_domains: list = settings.ALLOWED_DOMAINS,
     raise_exception: bool = False
 ) -> dict:
-    """
-    Возвращает ошибку, если электронная почта пользователя не соответствует заданным критериям.
-    * Электронная почта должна начинаться с буквы.
-    * Электронная почта должна включать не менее 2 символов в основной части.
-    * Доменная часть электронной почты должна быть в списке allowed_domains.
-    Если пользователь не найден и find_user=True, поднимается ошибка.
-    Возвращает словарь ошибок или None.
-    """
-    pattern = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
-
+    pattern = re.compile(r'^[a-zA-Z][a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+    
     # Проводим валидацию электронной почты
     match = pattern.match(email)
     error = {'email': []}
@@ -42,15 +33,15 @@ def email_validation_error(
                               и содержать не менее двух символов в основной части.')
     elif match.group(0).split('@')[1] not in allowed_domains:
         error['email'].append(f'Домен {match.group(0).split("@")[1]} не разрешен.')
-
-    # Если флаг find_user включен, проверяем наличие пользователя
-    if find_user:
-        user = User.objects.get_object_or_none(email=email)
-        if user is None:
-            error = {'email': ['Пользователь с таким email не найден.']}
-        elif not user.is_active:
-            error = {'email': ['Пользователь неактивен.']}
-
+    else:
+        # Если флаг find_user включен, проверяем наличие пользователя
+        if find_user:
+            user = User.objects.get_object_or_none(email=email)
+            if user is None:
+                error = {'email': ['Пользователь с таким email не найден.']}
+            elif not user.is_active:
+                error = {'email': ['Пользователь неактивен.']}
+    
     # Если есть ошибки и флаг raise_exception включен, вызываем исключение
     if error.get('email') and raise_exception:
         raise ValidationError(error)
@@ -101,31 +92,29 @@ def password_validation_error(password1: str,
     return error['password'] or None
 
 
-def login_data_validation_error(email: str, password: str, user: User, raise_exception: bool = False) -> dict | None:
+def login_data_validation_error(email: str, password: str, user: User,
+                                raise_exception: bool = False
+                                ) -> dict | None:
     """
-    Возвращает ошибку, если данные для входа в систему недействительны.
-    Проверяет, если электронная почта и пароль не пусты,
+    Возвращает ошибку, если данные для входа в систему недействительны. 
+    Проверяет, если электронная почта и пароль не пусты, 
     и пользователь аутентифицирован.
     """
     error: dict = {}
 
-    # Проверяем электронную почту
+    # Если электронная почта пуста
     if not email:
         error.update({'email': ['Это поле обязательно для заполнения.']})
-    elif user is None:
-        error.update({'email': ['Пользователь не найден.']})
-    elif user.is_active is False:
-        error.update({'email': ['Необходимо активировать аккаунт.']})
 
-    # Проверяем пароль
+    # Если пароль пуст
     if not password:
         error.update({'password': ['Это поле обязательно для заполнения.']})
-        
+
     # Если пользователь не найден, а электронная почта и пароль указаны
-    if user is None and email and password:
+    if user is None and email and password or not user.is_active:
         error.update({'email': ['Проверьте email или пароль.']})
-        # Удаляем старое сообщение об ошибке пароля
-        error.pop('password', None)
+        error.update({'password': ['Проверьте email или пароль.']})
+
 
     # Если есть ошибки и флаг raise_exception включен, вызвать исключение
     if error and raise_exception is True:
