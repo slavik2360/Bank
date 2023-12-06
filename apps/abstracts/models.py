@@ -28,8 +28,8 @@ class AbstractManager(models.Manager):
 
     def get_object_or_none(self, **filter: Any) -> Any | None:
         """
-        Получить объект модели по заданным параметрам или None, 
-        если объект не существует.
+        Получить объект модели по заданным параметрам, 
+        либо None если объект не существует.
         """
         try:
             obj: Any = self.get(**filter)

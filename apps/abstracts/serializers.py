@@ -18,16 +18,15 @@ class CustomValidSerializer(serializers.Serializer):
         # Допустимые поля
         allowed_fields: set = set(self.get_fields())
 
-        # Ошибки словаря или их возбуждение позже
         error: dict = {}
 
-        # Проверить, все ли переданные поля в допустимых полях
+        # Проверка, все ли переданные поля в допустимых полях
         invalid_fields = set(data.keys()) - allowed_fields - set(self.allowed_fields)
 
         # Если есть недопустимые поля
         if invalid_fields:
             for field in invalid_fields:
-                error[field] = ['Not allowed.']
+                error[field] = ['Не допускается.']
 
             raise serializers.ValidationError(error)
 

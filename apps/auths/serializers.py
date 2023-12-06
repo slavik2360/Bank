@@ -1,11 +1,8 @@
 # Django
 # DRF
-from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils import timezone
 from django.contrib.auth import authenticate
 from rest_framework import serializers
-
-# Simple JWT
 from rest_framework_simplejwt.tokens import RefreshToken
 
 # Python
@@ -32,7 +29,8 @@ from auths.validators import (
 )
 
 
-class RegistrateUserSerializer(serializers.ModelSerializer):
+class RegistrateUserSerializer(CustomValidSerializer,
+                               serializers.ModelSerializer):
     """
     Сериализатор пользователя для регистрации.
     """
@@ -441,7 +439,7 @@ class LogoutSerializer(CustomValidSerializer, AccessTokenMixin):
         
     def save(self) -> None:
         """
-        Сохранение данных. (В данном случае метод не используется, оставлен для совместимости.)
+        Сохранение данных.
         """
         pass
 
@@ -455,8 +453,6 @@ class LogoutSerializer(CustomValidSerializer, AccessTokenMixin):
         return response
 
 
-
-
 class UserSerializer(CustomValidSerializer, AccessTokenMixin):
     """
     Сериализатор для пользователя.
@@ -465,3 +461,9 @@ class UserSerializer(CustomValidSerializer, AccessTokenMixin):
     last_name: str = serializers.CharField(required=True, max_length=255, label='Фамилия')
     email: str = serializers.EmailField(required=True, max_length=160, label='Email')
     datetime_created: str = serializers.CharField(required=True, label='Время создания')
+
+
+class UserCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= User
+        fields = '__all__'

@@ -103,7 +103,6 @@ ALLOWED_DOMAINS: tuple[str, ...] = ('yandex.ru', 'gmail.com', 'mail.ru',
                                     'bk.ru','ok.ru', 'cloud.com')
 
 AUTH_USER_MODEL = 'auths.User'
-APPEND_SLASH = False
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -117,7 +116,7 @@ CORS_ALLOWED_ORIGINS = (
     'http://127.0.0.1',
 )
 
-# CORS_URLS_REGEX = r'^/api/.*$'
+CORS_URLS_REGEX = r'^/api/.*$'
 
 #-----DATA-BASES--------------------------------------
 # DB_NAME = decouple.config('DB_NAME', cast=str)
