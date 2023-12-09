@@ -11,6 +11,7 @@ from rest_framework.viewsets import ViewSet
 from django.shortcuts import get_object_or_404
 
 # Local
+from bank.paginators import TransactionPageNumberPaginator
 from abstracts.mixins import (
     AccessTokenMixin,
     ObjectMixin
@@ -18,14 +19,17 @@ from abstracts.mixins import (
 from bank.models import (
     Client,
     Card,
-    Transaction
+    Transaction,
+    ExchangeRate
 )
 from bank.serializers import (
-    ClientSerializer,
+    RequisiteSerializer,
     CreateClientAndCardSerializer,
     ForMeTransactionSerializer,
-    ForYouTransactionSerializer
-    # CardSerializer
+    ForYouTransactionSerializer,
+    TransactionSerializer,
+    CreateCurrencySerializer,
+    ExchangeRateSerializer
 )
 
 class BankViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
@@ -63,7 +67,7 @@ class BankViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
         """
         user = self.get_user(request=request)
         client: Client = Client.objects.get(user=user)
-        serializer = ClientSerializer(client)
+        serializer = RequisiteSerializer(client)
         response_data = serializer.data
         return JsonResponse(response_data, status=status.HTTP_200_OK)
     
@@ -101,28 +105,54 @@ class BankViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
         response_data = serializer.get_response()
         return JsonResponse(response_data, status=status.HTTP_200_OK)
 
-# class CLSss:
-#     serializer_class = ClientSerializer
-#     queryset = Client.objects.all()
+    @action(
+        detail=False, 
+        methods=['GET'], 
+        permission_classes=(IsAuthenticated,), 
+        url_path='transactions'
+    )
+    def get_transactions(self, request):
+        user = self.get_user(request=request)
+        client = Client.objects.get(user=user)
+        transactions = Transaction.objects.get_transactions_for_user(client)
 
-#     def list(
-#         self,
-#         request: Request,
-#         *args: tuple,
-#         **kwargs: dict
-#     )->JsonResponse:
-#         serializer: ClientSerializer = \
-#             ClientSerializer(
-#                 instance=self.queryset,
-#                 many=True
-#             )
-#         return JsonResponse(serializer.data)
-    
-    # serializer = ChangePasswordSerializer(
-    #         data=request.data, 
-    #         context={'request': request}
-    #     )
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save()
-    #     response_data = serializer.get_response()
-    #     return JsonResponse(response_data, status=status.HTTP_200_OK)
+        # Создаем экземпляр пагинатора
+        paginator = TransactionPageNumberPaginator()
+
+        # Получаем пагинированный queryset
+        paginated_transactions = paginator.paginate_queryset(transactions, request)
+
+        serializer = TransactionSerializer(paginated_transactions, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    @action(
+        detail=False, 
+        methods=['POST'],
+        permission_classes=(AllowAny,),
+        url_path='create_currency'
+    )
+    def СreateCardForClient(self, request: Request) -> JsonResponse:
+        """
+        Эндпойнт для получения актуальной валюты KZT to ... .
+        """
+        serializer = CreateCurrencySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.create_currecy()
+        response_data = serializer.get_response()
+        return JsonResponse(response_data, status=status.HTTP_201_CREATED)
+
+    @action(
+        detail=False, 
+        methods=['GET'],
+        permission_classes=(AllowAny,),
+        url_path='get_currency'
+    )
+    def get_exchange_rates(self, request):
+        """
+        Эндпойнт для вывода актуальной валюты KZT to ... .
+        """
+        queryset = ExchangeRate.objects.all()
+        serializer_class = ExchangeRateSerializer
+        exchange_rates = queryset
+        serializer = serializer_class(exchange_rates, many=True)
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK)

@@ -29,7 +29,7 @@ class HomePageView(BaseView):
     Домашняя страница.
     """
 
-    template: str = 'home.html'
+    template: str = 'nimbus.html'
 
 
 class RegistrationView(BaseView):

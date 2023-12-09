@@ -154,13 +154,13 @@ class Card(AbstractModel):
         )
     )
     # Cрок годности карты карты
-    date_expiration = models.DateField(
+    date_expiration: datetime = models.DateField(
         verbose_name='дата истечения',
         default=datetime.datetime.today() + datetime.timedelta(
             days=ONE_YEAR
         )
     )
-    is_active = models.BooleanField(
+    is_active: bool = models.BooleanField(
         default=True
     )
     # Менеджер
@@ -189,8 +189,8 @@ class TransactionManager(AbstractManager):
         :param client: Клиент, для которого нужно получить транзакции.
         :return: QuerySet с транзакциями, в которых клиент является отправителем или получателем.
         """
-        return self.filter(models.Q(sender=client) | models.Q(receiver=client))
-
+        return self.filter(models.Q(sender__client=client) | models.Q(receiver__client=client))
+    
 
 class Transaction(AbstractModel):
     """
@@ -231,3 +231,53 @@ class Transaction(AbstractModel):
         )
         verbose_name = 'Транзакция'
         verbose_name_plural = 'Транзакции'
+
+
+class ExchangeRateManager(models.Manager):
+    def get_rates_for_base_currency(self, base_currency):
+        """
+        Возвращает все обменные курсы для указанной базовой валюты.
+        """
+        return self.filter(base_currency=base_currency)
+
+    def get_rate(self, base_currency, target_currency):
+        """
+        Возвращает обменный курс для указанных валют.
+        """
+        try:
+            return self.get(base_currency=base_currency, target_currency=target_currency)
+        except ExchangeRate.DoesNotExist:
+            return None
+
+class ExchangeRate(AbstractModel):
+    base_currency: str = models.CharField(
+        verbose_name='базовая валюта',
+        max_length=3,
+        validators=(
+            MinLengthValidator(3),
+        )
+    )
+    target_currency: str = models.CharField(
+        verbose_name='конвертируемая валюта',
+        max_length=3,
+        validators=(
+            MinLengthValidator(3),
+        )
+    )
+    rate: float = models.DecimalField(
+        verbose_name='итог',
+        max_digits=10, 
+        decimal_places=4
+    )
+    
+    objects = ExchangeRateManager()
+
+    def __str__(self):
+        return f'{self.base_currency}/{self.target_currency}: {self.rate}'
+    
+    class Meta:
+        ordering = (
+            'id',
+        )
+        verbose_name = 'Обменный курс'
+        verbose_name_plural = 'Обменные курсы'

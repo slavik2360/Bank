@@ -1,23 +1,22 @@
 # Python
 import logging
 import random
+import decouple
 
 # DRF
-from django.contrib.auth.base_user import AbstractBaseUser
-from django.utils import timezone
 from rest_framework import serializers
-from rest_framework.serializers import ModelSerializer
-from django.db import transaction
 
 # Local
 from auths.models import User
 from abstracts.mixins import AccessTokenMixin
 from abstracts.serializers import CustomValidSerializer
 from bank.services.card_generate import GenerateCard
+from bank.services.currency_request import crate_exchange_currency
 from bank.models import (
     Client,
     Card,
     Transaction,
+    ExchangeRate
 )
 from bank.validators import (
     card_validation_error,
@@ -30,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 class CreateClientAndCardSerializer(CustomValidSerializer, AccessTokenMixin):
     """
-    Сериализатор для создания клиента и карты.
+    Сериалайзер для создания клиента и карты.
     """
     def create_client_and_card(self, user: User) -> None:
         # Создание клиента, если его еще нет
@@ -56,7 +55,7 @@ class CreateClientAndCardSerializer(CustomValidSerializer, AccessTokenMixin):
         return response
 
 
-class ClientSerializer(CustomValidSerializer, AccessTokenMixin):
+class RequisiteSerializer(CustomValidSerializer, AccessTokenMixin):
     """
     Сериалайзер для вывода данных о карте.
     """
@@ -75,7 +74,9 @@ class ClientSerializer(CustomValidSerializer, AccessTokenMixin):
 
 
 class ForMeTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
-
+    """
+    Сериалайзер для перевода средств.
+    """
     sender = serializers.CharField(max_length=16, required=True)
     receiver = serializers.CharField(max_length=16, required=True)
     amount = serializers.DecimalField(max_digits=10, decimal_places=2)
@@ -144,7 +145,9 @@ class ForMeTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
 
 
 class ForYouTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
-
+    """
+    Сериалайзер для перевода средств.
+    """
     sender = serializers.CharField(max_length=16, required=True)
     receiver = serializers.CharField(max_length=16, required=True)
     amount = serializers.DecimalField(max_digits=10, decimal_places=2)
@@ -216,3 +219,50 @@ class ForYouTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
             'data': 'Транзакция успешно выполнена.'
         }
         return response
+    
+
+class TransactionSerializer(CustomValidSerializer, AccessTokenMixin):
+    """
+    Сериалайзер для истории переводов.
+    """
+    sender_card_number = serializers.CharField(source='sender.number', read_only=True)
+    receiver_card_number = serializers.CharField(source='receiver.number', read_only=True)
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+    datetime_created = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
+
+    class Meta:
+        fields = ['sender_card_number', 'receiver_card_number', 'amount', 'datetime_created']
+
+
+class CreateCurrencySerializer(CustomValidSerializer):
+    """
+    Сериалайзер для создания актуальной валюты KZT to ... .
+    """
+    def create_currecy(self) -> None:
+        api_key = decouple.config('CURRENCY_KEY', cast=str)
+        base_currency = 'KZT'
+        # список конвертируемой валюты
+        target_currencies = ['USD', 'EUR', 'GBP', 'JPY', 'CNY']
+
+        crate_exchange_currency(api_key=api_key,
+                                base_currency=base_currency,
+                                target_currencies=target_currencies
+                                )
+        
+    def get_response(self) -> dict:
+        """
+        Возврат ответа представлению.
+        """
+        response: dict = {
+            'data': f'Валюта успешно обновленна.'
+        }
+        return response
+    
+
+class ExchangeRateSerializer(serializers.ModelSerializer):
+    """
+    Сериалайзер для получения актуальной валюты KZT to ... .
+    """
+    class Meta:
+        model = ExchangeRate
+        fields = '__all__'

@@ -5,7 +5,8 @@ from django.contrib import admin
 from bank.models import (
     Client,
     Card,
-    Transaction
+    Transaction,
+    ExchangeRate
 )
 
 @admin.register(Client)
@@ -26,5 +27,12 @@ class CardAdmin(admin.ModelAdmin):
 class TransactionAdmin(admin.ModelAdmin):
     """
     TransactionAdmin admin.
+    """
+    readonly_fields = ()
+
+@admin.register(ExchangeRate)
+class ExchangeRateAdmin(admin.ModelAdmin):
+    """
+    ExchangeRateAdmin admin.
     """
     readonly_fields = ()

@@ -32,7 +32,7 @@ from auths.validators import (
 class RegistrateUserSerializer(CustomValidSerializer,
                                serializers.ModelSerializer):
     """
-    Сериализатор пользователя для регистрации.
+    Сериалайзер пользователя для регистрации.
     """
 
     email: str = serializers.CharField(max_length=60, required=True)
@@ -102,9 +102,9 @@ class RegistrateUserSerializer(CustomValidSerializer,
 
 class ActivateAccountSerializer(CustomValidSerializer):
     """
-    Сериализатор для представления активации учетной записи.
+    Сериалайзер для представления активации учетной записи.
     """
-
+    
     email: str = serializers.CharField(max_length=60, required=True)
     code: str = serializers.CharField(max_length=50, required=True)
 
@@ -152,7 +152,7 @@ class ActivateAccountSerializer(CustomValidSerializer):
 
 class LoginUserSerializer(CustomValidSerializer):
     """
-    Сериализатор пользователя для входа в систему.
+    Сериалайзер пользователя для входа в систему.
     """
     email: str = serializers.CharField(max_length=60, required=True)
     password: str = serializers.CharField(max_length=128, required=True)
@@ -204,7 +204,7 @@ class LoginUserSerializer(CustomValidSerializer):
 
 class RefreshTokenSerializer(CustomValidSerializer, AccessTokenMixin):
     """
-    Сериализатор для обновления токена.
+    Сериалайзер для обновления токена.
     """
 
     def validate(self, attrs: dict) -> dict:
@@ -247,7 +247,6 @@ class ChangePasswordSerializer(CustomValidSerializer, AccessTokenMixin):
     """
     Сериалайзер для сброса пароля пользователя.
     """
-
     old_password: str = serializers.CharField(required=True)
     password: str = serializers.CharField(required=True)
     password2: str = serializers.CharField(required=True)
@@ -355,7 +354,6 @@ class ResetPasswordSerializer(CustomValidSerializer):
     """
     Сериалайзер для изменения пароля пользователя.
     """
-
     email: str = serializers.CharField(max_length=60, required=True)
     code: str = serializers.CharField(max_length=AccountCode.CODE_LENGTH, required=True)
     password: str = serializers.CharField(max_length=128, required=True)
@@ -454,7 +452,7 @@ class LogoutSerializer(CustomValidSerializer, AccessTokenMixin):
 
 class UserSerializer(CustomValidSerializer, AccessTokenMixin):
     """
-    Сериализатор для пользователя.
+    Сериалайзер для пользователя.
     """
     first_name: str = serializers.CharField(required=True, max_length=255, label='Имя')
     last_name: str = serializers.CharField(required=True, max_length=255, label='Фамилия')
