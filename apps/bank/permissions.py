@@ -5,26 +5,14 @@ from rest_framework.request import Request
 
 class Permission(BasePermission):
 
-    def __init__(self) -> None:
-        self.user_permission: bool = False
-        self.admin_permission: bool = False
+    def has_permission(self, request: Request, view: 'ViewSet') -> bool:
+        # Получаем объект пользователя из запроса
+        user = request.user
 
-    def has_permission(
-        self,
-        request: Request,
-        view: 'ViewSet'
-    ) -> bool:
-        self.user_permission = (
-            request.user and
-            request.user.is_active
-        )
-        self.admin_permission = self.user_permission and (
-            request.user.is_staff and
-            request.user.is_superuser
-        )
-        if view.action in (
-            'destroy',
-        ):
-            return self.admin_permission
+        # Проверяем, если это действие 'destroy'
+        if view.action == 'destroy':
+            # Разрешаем доступ, если пользователь активен, является сотрудником и суперпользователем
+            return user and user.is_active and user.is_staff and user.is_superuser
 
-        return self.user_permission
+        # Разрешаем доступ, если пользователь активен
+        return user and user.is_active

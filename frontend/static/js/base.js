@@ -6,7 +6,7 @@ if (logoutBtn) {
         tokenManager.getAccessToken().then(token => {
             axios.post("http://127.0.0.1:8000/api/v1/auth/logout/", {}, {
                 headers: {
-                    "Authorization": `Bearer ${token}`
+                    "Authorization": `Nimbus ${token}`
                 }
             })
         });

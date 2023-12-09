@@ -260,8 +260,7 @@ class ChangePasswordSerializer(CustomValidSerializer, AccessTokenMixin):
         password: str = attrs.get('password')
         password2: str = attrs.get('password2')
 
-        # get_user() из AccessTokenMixin и
-        # self.request из CommonPostMixin
+        # get_user() из AccessTokenMixin
         user = self.get_user(request=self.request)
 
         # Устанавливаем атрибут .user, чтобы использовать его затем в .save()

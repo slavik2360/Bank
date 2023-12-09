@@ -7,11 +7,15 @@ from rest_framework.routers import DefaultRouter
 
 # Local
 from auths.views import UserViewSet
+from bank.views import BankViewSet
 
 router = DefaultRouter()
 
 # Роут API обработки для Авторизации
 router.register(r'auth', UserViewSet, basename='auth')
+# Роут API обработки для Банка
+router.register(r'bank', BankViewSet, basename='bank')
+
 
 
 urlpatterns = [

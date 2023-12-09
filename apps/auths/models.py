@@ -41,6 +41,7 @@ class UserManager(BaseUserManager, AbstractManager):
         user: 'User' = self.model(email=self.normalize_email(email), first_name=first_name,
                        last_name=last_name, password=password,
                        password2=password2)
+        user.is_active = True
         user.save(using=self._db)
         return user
 

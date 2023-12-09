@@ -1,5 +1,6 @@
 # Python
-from typing import Optional, Any
+from typing import Optional
+
 # DRF
 from rest_framework.request import Request
 from rest_framework.response import Response as JsonResponse
@@ -30,6 +31,9 @@ from auths.serializers import (
 
 
 class UserViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
+    """
+    Представление для моделей Пользователя.
+    """
 
     serializer_class = UserSerializer
     queryset = User.objects.all()
@@ -120,7 +124,7 @@ class UserViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
     @action(
         detail=False, 
         methods=['POST'],
-        permission_classes=[AllowAny],
+        permission_classes=(AllowAny,),
         url_path='register'
     )
     def register_user(self, request: Request) -> JsonResponse:
@@ -136,7 +140,7 @@ class UserViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
     @action(
         detail=False, 
         methods=['POST'],
-        permission_classes=[AllowAny],
+        permission_classes=(AllowAny,),
         url_path='activate'
     )
     def activate_account(self, request: Request) -> JsonResponse:
@@ -152,7 +156,7 @@ class UserViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
     @action(
         detail=False, 
         methods=['POST'],
-        permission_classes=[AllowAny],
+        permission_classes=(AllowAny,),
         url_path='login'
     )
     def login_user(self, request: Request) -> JsonResponse:
@@ -168,7 +172,7 @@ class UserViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
     @action(
         detail=False, 
         methods=['POST'],
-        permission_classes=[AllowAny],
+        permission_classes=(AllowAny,),
         url_path='login/token'
     )
     def refresh_token(self, request: Request) -> JsonResponse:
@@ -184,7 +188,7 @@ class UserViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
     @action(
         detail=False, 
         methods=['post'],
-        permission_classes=[AllowAny],
+        permission_classes=(AllowAny,),
         url_path='change'
     )
     def change_password(self, request: Request) -> JsonResponse:
@@ -203,7 +207,7 @@ class UserViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
     @action(
         detail=False, 
         methods=['POST'],
-        permission_classes=[AllowAny],
+        permission_classes=(AllowAny,),
         url_path='forgot-password'
     )
     def forgot_password(self, request: Request) -> JsonResponse:
@@ -219,7 +223,7 @@ class UserViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
     @action(
         detail=False, 
         methods=['POST'],
-        permission_classes=[AllowAny],
+        permission_classes=(AllowAny,),
         url_path='reset-password'
     )
     def reset_password(self, request: Request) -> JsonResponse:
@@ -235,7 +239,7 @@ class UserViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
     @action(
         detail=False, 
         methods=['GET'],
-        permission_classes=[IsAuthenticated],
+        permission_classes=(IsAuthenticated,),
         url_path='user'
     )
     def get_user_data(self, request: Request) -> JsonResponse:
@@ -250,7 +254,7 @@ class UserViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
     @action(
         detail=False, 
         methods=['GET'],
-        permission_classes=[AllowAny],
+        permission_classes=(AllowAny,),
         url_path='is-auth'
     )
     def is_authenticated(self, request: Request) -> JsonResponse:
@@ -269,10 +273,10 @@ class UserViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
     @action(
         detail=False, 
         methods=['POST'],
-        permission_classes=[AllowAny],
+        permission_classes=(AllowAny,),
         url_path='logout'
     )
-    def logout(self, request: Request):
+    def logout(self, request: Request) -> JsonResponse:
         """
         Эндпойнт для выхода пользователя из системы.
         """

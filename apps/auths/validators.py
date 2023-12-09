@@ -206,28 +206,6 @@ def user_code_validation(user: User, code: str, code_type: int,
     return error if error else None
 
 
-def password_recovery_validation_error(user: User, first_name: str,
-                                       last_name: str, raise_exception: bool = False
-                                       ) -> dict | None:
-    """
-    Проверяет, являются ли все данные пользователя для восстановления данных действительными.
-    Возвращает словарь ошибок или None.
-    """
-    error: dict = {}
-
-    # Проверка, является ли полное имя недействительным
-    expected_fullname = f"{last_name} {first_name}"
-    if user.fullname != expected_fullname:
-        err: str = ['Пользователь не найден.']
-        error.update({'last_name': err, 'first_name': err})
-
-    # Если данные недействительны и функция должна вызвать исключение
-    if error and raise_exception is True:
-        raise ValidationError(error)
-
-    return error if error else None
-
-
 def old_password_validation_error(user: User, password: str,
                                   raise_exception: bool = False
                                   ) -> dict | None:
@@ -241,7 +219,7 @@ def old_password_validation_error(user: User, password: str,
     if not user.check_password(password):
         error = {'old_password': ['Старый пароль недействителен.']}
 
-    # Если не действителен и функция должна вызывать исключение
+    # Если есть ошибки и флаг raise_exception включен, вызвать исключение
     if error and raise_exception is True:
         raise ValidationError(error)
 
