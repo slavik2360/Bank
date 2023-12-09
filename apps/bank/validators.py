@@ -66,6 +66,28 @@ def length_card_validation_error(card_sender: str,
     # Вернуть ошибки или None
     return error if error else None
 
+def balance_validation_error(user: Client, 
+                             amount: float, 
+                             raise_exception: bool = False
+                            ) -> dict | None:
+    """
+    Проверяет баланс для выполнения транзакции.
+
+    Возвращает словарь ошибок или None.
+    """
+    error: dict = {}
+    client: Client = Client.objects.get(user=user)
+
+    if client.account_balance < amount:
+        error['balance'] = ['Недостаточно средств на балансе для выполнения транзакции.']
+
+    # Если не действителен и функция должна вызывать исключение
+    if error and raise_exception:
+        raise ValidationError(error)
+
+    # Вернуть ошибки или None
+    return error if error else None
+
 def amount_validation_error(amount: str, 
                             raise_exception: bool = False
                             ) -> dict | None:

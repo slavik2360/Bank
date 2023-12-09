@@ -190,7 +190,7 @@ class TransactionManager(AbstractManager):
         :return: QuerySet с транзакциями, в которых клиент является отправителем или получателем.
         """
         return self.filter(models.Q(sender=client) | models.Q(receiver=client))
-    
+
 
 class Transaction(AbstractModel):
     """

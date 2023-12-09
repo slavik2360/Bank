@@ -179,7 +179,9 @@ class UserViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
         """
         Эндпойнт для обновления токена доступа пользователя.
         """
-        serializer = RefreshTokenSerializer(data=request.data, context={'request': request})
+        serializer = RefreshTokenSerializer(
+            data=request.data, context={'request': request}
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         response_data = serializer.get_response()
@@ -280,7 +282,9 @@ class UserViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
         """
         Эндпойнт для выхода пользователя из системы.
         """
-        serializer = LogoutSerializer(data=request.data, context={'request': request})
+        serializer = LogoutSerializer(
+            data=request.data, context={'request': request}
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         response_data = serializer.build_response()

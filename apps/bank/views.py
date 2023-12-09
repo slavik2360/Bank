@@ -93,7 +93,9 @@ class BankViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
         """
         Эндпойнт для перевода средств с карты.
         """
-        serializer = ForYouTransactionSerializer(data=request.data)
+        serializer = ForYouTransactionSerializer(
+            data=request.data, context={'request': request}
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         response_data = serializer.get_response()

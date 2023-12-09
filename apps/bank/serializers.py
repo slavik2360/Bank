@@ -22,7 +22,8 @@ from bank.models import (
 from bank.validators import (
     card_validation_error,
     length_card_validation_error,
-    amount_validation_error
+    amount_validation_error,
+    balance_validation_error
 )
 
 logger = logging.getLogger(__name__)
@@ -87,10 +88,8 @@ class ForMeTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
         receiver_card_number: str = attrs.get('receiver')
         amount_transacrion: str = attrs.get('amount')
 
-
         # Проверка, что карта существует в базе данных
         card_validation_error(card=receiver_card_number, raise_exception=True)
-
         # Проверка, что номер карты соответствует длине
         length_card_validation_error(card_sender=sender_card_number, 
                                      card_receiver=receiver_card_number,
@@ -102,11 +101,14 @@ class ForMeTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
         return attrs
 
     def save(self) -> None:
+        """
+        Сохранение данных.
+        """
         sender_card_number = self.validated_data['sender']
         receiver_card_number = self.validated_data['receiver']
         amount = self.validated_data['amount']
 
-        # Проверяем существование карты отправителя
+        # Проверяем существование карты получателя
         try:
             sender_card = Card.objects.get(number=sender_card_number)
         except Card.DoesNotExist:
@@ -154,11 +156,11 @@ class ForYouTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
         sender_card_number: str = attrs.get('sender')
         receiver_card_number: str = attrs.get('receiver')
         amount_transacrion: str = attrs.get('amount')
-
+        request = self.context.get('request')
+        client = self.get_user(request=request)
 
         # Проверка, что карта существует в базе данных
         card_validation_error(card=sender_card_number, raise_exception=True)
-
         # Проверка, что номер карты соответствует длине
         length_card_validation_error(card_sender=sender_card_number, 
                                      card_receiver=receiver_card_number,
@@ -166,42 +168,45 @@ class ForYouTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
                                     )
         # Проверка, что сумма перевода соответсвует параметрам
         amount_validation_error(amount=amount_transacrion, raise_exception=True)
-        
+        # Проверка, средств на балансе
+        balance_validation_error(user=client,
+                                 amount=amount_transacrion,  
+                                 raise_exception=True
+                                )
         return attrs
 
     def save(self) -> None:
+        """
+        Сохранение данных.
+        """
+        sender_card_number = self.validated_data['sender']
+        receiver_card_number = self.validated_data['receiver']
+        amount = self.validated_data['amount']
+
+        # Проверка существования карты отправителя
         try:
-            sender_card_number = self.validated_data['sender']
-            receiver_card_number = self.validated_data['receiver']
-            amount = self.validated_data['amount']
+            receiver_card = Card.objects.get(number=receiver_card_number)
+        except Card.DoesNotExist:
+            # Если карта отправителя не существует, создаем ее
+            receiver_cvv = random.randrange(100, 1000)
+            Card.objects.create_card(card_number=receiver_card_number , cvv=receiver_cvv)
+            receiver_card = Card.objects.get(number=receiver_card_number )
 
-            # Проверяем существование карты отправителя
-            try:
-                receiver_card = Card.objects.get(number=receiver_card_number )
-            except Card.DoesNotExist:
-                # Если карта отправителя не существует, создаем ее
-                receiver_cvv = random.randrange(100, 1000)
-                Card.objects.create_card(card_number=receiver_card_number , cvv=receiver_cvv)
-                receiver_card = Card.objects.get(number=receiver_card_number )
+        # Получаем карту получателя
+        sender_card = Card.objects.get(number=sender_card_number)
+        sender_client: Client = sender_card.client
 
-            # Получаем карту получателя
-            sender_card = Card.objects.get(number=sender_card_number)
-            sender_client: Client = sender_card.client
+        # Увеличиваем баланс получателя
+        sender_client.account_balance -= amount
+        sender_client.save()
 
-            # Увеличиваем баланс получателя
-            sender_client.account_balance -= amount
-            sender_client.save()
-
-            # Создаем объект Transaction
-            transaction: Transaction = Transaction(
-                sender=sender_card,
-                receiver=receiver_card,
-                amount=amount
-            )
-            transaction.save()
-
-        except Exception as e:
-            print("ERRORR TRANSACT_->", e)
+        # Создаем объект Transaction
+        transaction: Transaction = Transaction(
+            sender=sender_card,
+            receiver=receiver_card,
+            amount=amount
+        )
+        transaction.save()
 
     def get_response(self) -> dict:
         """
