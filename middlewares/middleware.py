@@ -7,6 +7,27 @@ from typing import Callable
 
 
 class SecureMiddleware:
+    """
+    Middleware для обеспечения безопасности.
+
+    Устанавливает заголовки безопасности, такие как X-Frame-Options и X-Content-Type-Options.
+    Также управляет установкой и удалением httponly cookie с токеном обновления (refresh_token).
+
+    Attributes:
+        LOGIN_REFERER (str): Ссылка для проверки Referer при логине.
+        LOGOUT_REFERER (str): Ссылка для проверки Referer при логауте.
+
+    Methods:
+        __init__(self, get_response: Callable): Конструктор middleware.
+        
+        set_refresh_token_cookie(self, response: HttpResponse, token: str): 
+        -> Устанавливает httponly cookie с токеном обновления.
+
+        def delete_refresh_token_cookie(self, response: HttpResponse):
+        -> Удаляет токен обновления при выходе пользователя с аккаунта.
+
+        __call__(self, request: WSGIRequest) -> HttpResponse: Обработчик middleware.
+    """
 
     # Ссылки для проверки Referer
     LOGIN_REFERER = 'http://127.0.0.1:8000/login/'
@@ -31,6 +52,18 @@ class SecureMiddleware:
         # Установка cookie refresh_token
         response.set_cookie('refresh_token', token, **params)
 
+    def delete_refresh_token_cookie(self, response: HttpResponse) -> None:
+        """
+        Удаление куки refresh_token из response.
+        """
+        # Параметры для удаления cookie
+        params = {
+            'path': '/',
+        }
+
+        # Удаление cookie refresh_token
+        response.delete_cookie('refresh_token', **params)
+        
     def __call__(self, request: WSGIRequest) -> HttpResponse:
         response = self.get_response(request)
 
@@ -51,7 +84,7 @@ class SecureMiddleware:
         elif request.META.get('HTTP_REFERER') == self.LOGOUT_REFERER:
             # Если есть данные и ответ успешен (статус код 200)
             if hasattr(response, 'data') and response.status_code == 200:
-                response.delete_cookie('refresh_token')
+                self.delete_refresh_token_cookie(response)
 
         return response
 

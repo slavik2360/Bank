@@ -37,7 +37,11 @@ class Client(AbstractModel):
     """
     Модель клиента банка. 
     """
-    user: 'User' = models.OneToOneField(User, on_delete=models.CASCADE)
+    user: 'User' = models.OneToOneField(
+        verbose_name='клиент банка',
+        to=User, 
+        on_delete=models.CASCADE
+    )
     account_balance: float = models.DecimalField(
         max_digits=10, 
         decimal_places=2, 
@@ -131,7 +135,7 @@ class Card(AbstractModel):
     client: Client = models.ForeignKey(
         verbose_name='владелец',
         to=Client,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='cards',
         null=True,
         blank=True
@@ -199,7 +203,7 @@ class Transaction(AbstractModel):
     sender: Card = models.ForeignKey(
         verbose_name='отправитель',
         to=Card,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='transactions_sended',
         blank=True,
         null=True
@@ -208,7 +212,7 @@ class Transaction(AbstractModel):
     receiver: Card = models.ForeignKey(
         verbose_name='получатель',
         to=Card,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='transactions_received',
         blank=True,
         null=True
@@ -223,7 +227,7 @@ class Transaction(AbstractModel):
     objects: TransactionManager = TransactionManager()
 
     def __str__(self) -> str:
-        return f"{self.sender.number} -> {self.receiver.number}"
+        return f"{self.sender.client}-{self.sender.number} -> {self.receiver.client}-{self.receiver.number}"
 
     class Meta:
         ordering = (

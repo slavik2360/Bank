@@ -23,13 +23,14 @@ from bank.models import (
     ExchangeRate
 )
 from bank.serializers import (
-    RequisiteSerializer,
     CreateClientAndCardSerializer,
-    ForMeTransactionSerializer,
-    ForYouTransactionSerializer,
+    RequisiteSerializer,
+    RefillTransactionSerializer,
+    TransferTransactionSerializer,
     TransactionSerializer,
     CreateCurrencySerializer,
-    ExchangeRateSerializer
+    ExchangeRateSerializer,
+    FillBalanceSerializer
 )
 
 class BankViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
@@ -39,6 +40,7 @@ class BankViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
     """
     API api/v1/bank/...
     """
+
     @action(
         detail=False, 
         methods=['POST'],
@@ -75,13 +77,15 @@ class BankViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
         detail=False, 
         methods=['POST'],
         permission_classes=(IsAuthenticated,),
-        url_path='forme_transaction'
+        url_path='fill_balance'
     )
-    def forme_transactions(self, request: Request) -> JsonResponse:
+    def fill_balance_transactions(self, request: Request) -> JsonResponse:
         """
-        Эндпойнт для перевода средств себе на карту.
+        Эндпойнт для перевода средств.
         """
-        serializer = ForMeTransactionSerializer(data=request.data)
+        serializer = FillBalanceSerializer(
+            data=request.data, context={'request': request}
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         response_data = serializer.get_response()
@@ -91,13 +95,29 @@ class BankViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
         detail=False, 
         methods=['POST'],
         permission_classes=(IsAuthenticated,),
-        url_path='foryou_transaction'
+        url_path='refill'
     )
-    def foryou_transactions(self, request: Request) -> JsonResponse:
+    def refil_transactions(self, request: Request) -> JsonResponse:
+        """
+        Эндпойнт для перевода средств себе на карту.
+        """
+        serializer = RefillTransactionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        response_data = serializer.get_response()
+        return JsonResponse(response_data, status=status.HTTP_200_OK)
+    
+    @action(
+        detail=False, 
+        methods=['POST'],
+        permission_classes=(IsAuthenticated,),
+        url_path='transfer'
+    )
+    def transfer_transactions(self, request: Request) -> JsonResponse:
         """
         Эндпойнт для перевода средств с карты.
         """
-        serializer = ForYouTransactionSerializer(
+        serializer = TransferTransactionSerializer(
             data=request.data, context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
@@ -129,9 +149,9 @@ class BankViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
         detail=False, 
         methods=['POST'],
         permission_classes=(AllowAny,),
-        url_path='create_currency'
+        url_path='currency_create'
     )
-    def СreateCardForClient(self, request: Request) -> JsonResponse:
+    def СreateCurrency(self, request: Request) -> JsonResponse:
         """
         Эндпойнт для получения актуальной валюты KZT to ... .
         """

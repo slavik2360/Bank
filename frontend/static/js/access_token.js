@@ -8,8 +8,7 @@ function TokenManager() {
 
             accessToken = response.data.access;
             expireAt = Date.now() + (4 * 60 * 1000);
-
-            // Сохраняем токен в localStorage
+            
             localStorage.setItem('access_token', accessToken);
 
             return accessToken;
@@ -20,16 +19,12 @@ function TokenManager() {
     }
 
     async function getAccessToken() {
-        // Проверяем, есть ли токен в localStorage
         const storedToken = localStorage.getItem('access_token');
 
-        // Если токен есть и он еще не истек, возвращаем его
         if (storedToken && Date.now() < expireAt) {
             accessToken = storedToken;
             return accessToken;
         }
-
-        // В противном случае, получаем новый токен
         return await setAccessToken();
     }
 

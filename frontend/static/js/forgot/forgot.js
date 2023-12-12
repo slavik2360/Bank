@@ -7,7 +7,6 @@ inputEmail.addEventListener("focus", () => {
   inputEmail.style.border = "none";
 });
 
-
 btn.addEventListener("click", async (event) => {
   event.preventDefault();
 
@@ -42,7 +41,6 @@ btn.addEventListener("click", async (event) => {
         }
       }
     } else {
-      // Если нет ответа от сервера
       text.style.color = "rgb(220, 53, 69)";
       text.innerText = "Произошла неизвестная ошибка";
     }

@@ -9,10 +9,9 @@ from django.conf import settings
 
 # Local
 from .models import (
-    User,
     Client,
     Card,
-    Transaction
+    ExchangeRate
 )
 
 
@@ -93,6 +92,32 @@ def amount_validation_error(amount: str,
                             ) -> dict | None:
     """
     Проверяет сумму для перевода.
+
+    Возвращает словарь ошибок или None.
+    """
+    error: dict = {}
+
+    try:
+        amount = float(amount)
+    except ValueError:
+        error['amount'] = ['Введите корректное числовое значение.']
+
+    if amount <= 100:
+        error['amount'] = ['Минимальная сумма перевода должна быть больше 100₸.']
+
+    # Если не действителен и функция должна вызывать исключение
+    if error and raise_exception:
+        raise ValidationError(error)
+
+    # Вернуть ошибки или None
+    return error if error else None
+
+
+def digit_validation_error(amount: str, 
+                            raise_exception: bool = False
+                            ) -> dict | None:
+    """
+    Проверяет сумму для пополнения счета.
 
     Возвращает словарь ошибок или None.
     """

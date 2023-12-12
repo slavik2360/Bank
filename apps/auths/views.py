@@ -91,10 +91,11 @@ class UserViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
     def partial_update(
         self,
         request:Request,
-        pk: Optional[int] = None
     ) -> JsonResponse:
-        user = self.get_object(self.queryset, pk)
-        serializer = UserCreateSerializer(
+        user = self.get_user(request=request)
+        serializer = self.serializer_class(instance=user)
+        user = self.get_user()
+        serializer = UserSerializer(
             instance=user, 
             data=request.data, 
             partial=True
@@ -252,6 +253,19 @@ class UserViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
         user = self.get_user(request=request)
         serializer = self.serializer_class(instance=user)
         return JsonResponse(data=serializer.data, status=status.HTTP_200_OK)
+    
+    @action(
+        detail=False,
+        methods=['patch'],
+        permission_classes=[IsAuthenticated],
+        url_path='update-avatar'
+    )
+    def update_avatar(self, request: Request):
+        user = self.get_user(request=request)
+        serializer = UserSerializer(instance=user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK)
     
     @action(
         detail=False, 

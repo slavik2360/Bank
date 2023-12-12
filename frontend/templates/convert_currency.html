@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Конвертация валют{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/convert.css' %}">
+{% endblock %}
+
+{% block content %}
+    {% if refresh_token_exists %}
+        {% include "profile_nav.html" %}
+    {% else %}
+        {% include "nav.html" %}
+    {% endif %}
+    <div class="user-information">
+        <div class="user-container">
+            <div class="column" id="col-2">
+                <div class="currency-container">
+                    <div class="info-currency">
+                        <div class="flag_kzt"></div>
+                        <div class="cur_kzt">KZT</div>
+                        <div class="amount">
+                            <input type="text" name="amount" class="total_amount">
+                        </div>
+                        <div class="flag_world"></div>
+                        <div class="cur_cur">
+                            <select id="currencySelector">
+                                <option value="458.92">USD</option>
+                                <option value="494.11">EUR</option>
+                                <option value="4.98">RUB</option>
+                                <option value="576.30">GBP</option>
+                                <option value="3.16">JPY</option>
+                                <option value="63.89">CNY</option>
+                            </select>
+                        </div>
+                        <div class="result">0.000</div>
+                    </div>                    
+                </div>
+                <div class="new-card">
+                    <button id="new-card-btn"><p>Конвертировать</p></button>
+                </div>
+                <p class="info-p">Нажмите, чтобы конвертировать валюту!</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/currency/convert.js' %}"></script>
+{% endblock %}

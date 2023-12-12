@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Курс валют{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/currencies.css' %}">
+{% endblock %}
+
+{% block content %}
+    {% if refresh_token_exists %}
+        {% include "profile_nav.html" %}
+    {% else %}
+        {% include "nav.html" %}
+    {% endif %}
+    <div class="user-information">
+        <div class="user-container">
+            <div class="column" id="col-2">
+                <div class="new-card">
+                    <button id="new-card-btn"><p>курс валют</p></button>
+                </div>
+                <p class="info-p">Нажмите, чтобы получить актуальный курс валют!</p>
+                <div class="currency-container">
+                    <div class="info-currency">
+                        <div class="flag_kzt"></div>
+                        <div class="cur_kzt">KZT</div>
+                        <div class="line"></div>
+                        <div class="flag_usa"></div>
+                        <div class="cur_cur"><span class="cur">USD </span><span class="money">...</span></div>
+                    </div>
+                    <div class="info-currency">
+                        <div class="flag_kzt"></div>
+                        <div class="cur_kzt">KZT</div>
+                        <div class="line"></div>
+                        <div class="flag_eur"></div>
+                        <div class="cur_cur"><span class="cur">EUR </span><span class="money">...</span></div>
+                    </div>
+                    <div class="info-currency">
+                        <div class="flag_kzt"></div>
+                        <div class="cur_kzt">KZT</div>
+                        <div class="line"></div>
+                        <div class="flag_rus"></div>
+                        <div class="cur_cur"><span class="cur">RUB </span><span class="money">...</span></div>
+                    </div>
+                    <div class="info-currency">
+                        <div class="flag_kzt"></div>
+                        <div class="cur_kzt">KZT</div>
+                        <div class="line"></div>
+                        <div class="flag_ang"></div>
+                        <div class="cur_cur"><span class="cur">GBP </span><span class="money">...</span></div>
+                    </div>
+                    <div class="info-currency">
+                        <div class="flag_kzt"></div>
+                        <div class="cur_kzt">KZT</div>
+                        <div class="line"></div>
+                        <div class="flag_jap"></div>
+                        <div class="cur_cur"><span class="cur">JPY </span><span class="money">...</span></div>
+                    </div>
+                    <div class="info-currency">
+                        <div class="flag_kzt"></div>
+                        <div class="cur_kzt">KZT</div>
+                        <div class="line"></div>
+                        <div class="flag_ch"></div>
+                        <div class="cur_cur"><span class="cur">CNY </span><span class="money">...</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/currency/currencies.js' %}"></script>
+{% endblock %}

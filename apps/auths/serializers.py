@@ -458,6 +458,17 @@ class UserSerializer(CustomValidSerializer, AccessTokenMixin):
     last_name: str = serializers.CharField(required=True, max_length=255, label='Фамилия')
     email: str = serializers.EmailField(required=True, max_length=160, label='Email')
     datetime_created: str = serializers.CharField(required=True, label='Время создания')
+    avatar = serializers.ImageField(required=True, label='Аватар пользователя')
+
+    def update(self, instance, validated_data):
+        # Реализуйте частичное обновление, например:
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.email = validated_data.get('email', instance.email)
+        instance.datetime_created = validated_data.get('datetime_created', instance.datetime_created)
+        instance.avatar = validated_data.get('avatar', instance.avatar)
+        instance.save()
+        return instance
 
 
 class UserCreateSerializer(serializers.ModelSerializer):

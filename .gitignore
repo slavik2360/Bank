@@ -3,6 +3,7 @@
 env
 env/
 
+# posters/*
 *.pyc
 *.pyo
 *.env

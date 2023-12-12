@@ -1,0 +1,163 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(45deg, rgb(221, 182, 109), #e0dddf);
+    overflow-x: hidden;
+}
+
+.user-information {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.user-container {
+    margin-top: 30px;
+    padding-top: 50px;
+    width: 1050px;
+    display: flex;
+    justify-content: center;
+}
+
+.column {
+    margin-top: 30px;
+    width: 350px;
+    height: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+#col-2 {
+    height: auto;
+    width: 800px;
+    align-items: center;
+    justify-content: flex-start;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+}
+.info-p{
+    color: black;
+}
+.currency-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    justify-content: space-between;
+    width: 80%;
+    height: 80%;
+}
+
+#currency-exchange {
+    font-size: 16px;
+    color: #333;
+    font-weight: bold;
+}
+
+button {
+    margin-top: 10px;
+    background: rgb(255, 170, 51);
+    width: 200px;
+    height: 50px;
+    text-align: center;
+    border-radius: 5px;
+    border: 1px solid rgb(255, 170, 51);
+}
+button:hover {
+    background: rgb(255, 170, 51);
+}
+
+button p {
+    color: rgb(52, 47, 40);
+    font-size: x-large;
+    font-weight: bold;
+}
+
+/* CURRENCY */
+
+.info-currency {
+    border: 1px solid orange;
+    height: 70px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    font-size: x-large;
+}
+.flag_kzt {
+    width: 40px;
+    height: 40px;
+    background-image: url('/static/icons/flag/казахстан.png');
+    background-size: cover;
+}
+.cur_kzt{
+    width: 50px;
+    height: 40px;
+    text-align: center;
+    color: black;
+    margin-top: 10px;
+}
+.kzt{
+    color: black;
+}
+.amout{
+    width: 100px;
+    height: 40px;
+}
+.total_amount{
+    border: 2px solid orange;
+    width: 100px;
+    height: 40px;
+    font-size: x-large;
+    align-items: center;
+    padding-left: 10px;
+    background: none;
+    border-radius: 10px;
+}
+.total_amount:active, :hover, :focus {
+    outline: 0;
+    outline-offset: 0;
+}
+.flag_world{
+    width: 40px;
+    height: 40px;
+    background-image: url('/static/icons/flag/planet.png');
+    background-size: cover;
+}
+.cur_cur{
+    width: 80px;
+    height: 40px;
+    text-align: center;
+}
+#currencySelector{
+    width: 80px;
+    height: 40px;
+    padding-left: 10px;
+    font-size: large;
+    align-items: center;
+    border: 2px solid orange;
+    border-radius: 10px;
+    background: none;
+}
+.result{
+    border: 2px solid orange;
+    border-radius: 10px;
+    width: 130px;
+    height: 40px;
+    font-size: x-large;
+    padding: 5px;
+}
+.cur{
+    color: black;
+}
+

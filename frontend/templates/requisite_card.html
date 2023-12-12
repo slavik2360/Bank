@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Реквизиты карты{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/requisite.css' %}">
+{% endblock %}
+
+{% block content %}
+    {% if refresh_token_exists %}
+        {% include "profile_nav.html" %}
+    {% else %}
+        {% include "nav.html" %}
+    {% endif %}
+    <div class="user-information">
+        <div class="user-container">
+            <div class="column" id="col-2">
+                <div class="transaction-container">
+                    <div class="info-requisite">
+                        <span id="requisite_fullname"></span>
+                    </div>
+                    <div class="info-requisite">
+                        <span id="requisite_number"></span>
+                    </div>
+                    <div class="info-requisite">
+                        <span id="requisite_date"></span>
+                    </div>
+                    <div class="info-requisite">
+                        <span id="requisite_cvv"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/check-auth.js' %}"></script>
+    <script src="{% static 'js/requisite/requisite.js' %}"></script>
+{% endblock %}

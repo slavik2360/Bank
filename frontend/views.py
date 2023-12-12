@@ -21,7 +21,12 @@ class BaseView(View):
         """
         Метод, GET.
         """
-        return render(request=request, template_name=self.template)
+        refresh_token_exists = 'refresh_token' in request.COOKIES
+        return render(
+            request=request, 
+            template_name=self.template,
+            context={'refresh_token_exists': refresh_token_exists}
+        )
     
 
 class HomePageView(BaseView):
@@ -71,6 +76,7 @@ class ForgotPasswordView(BaseView):
 
     template: str = 'forgot-password.html'
 
+
 class ResetPasswordView(BaseView):
     """
     Смена пароля.
@@ -78,9 +84,98 @@ class ResetPasswordView(BaseView):
 
     template: str = 'reset-password.html'
 
+
 class ProfileView(BaseView):
     """
     Профиль пользователя.
     """
 
     template: str = 'profile.html'
+
+
+class FillWalletView(BaseView):
+    """
+    Пополнение кошелька.
+    """
+
+    template: str = 'fill_wallet.html'
+
+
+class TransferView(BaseView):
+    """
+    Перевод денег с карты.
+    """
+
+    template: str = 'transfer.html'
+
+
+class RefillView(BaseView):
+    """
+    Перевод денег на карту.
+    """
+
+    template: str = 'refill.html'
+
+
+class HistoryTransferView(BaseView):
+    """
+    История транзакций по карте.
+    """
+
+    template: str = 'history_transfer.html'
+
+
+class ReqisiteCardView(BaseView):
+    """
+    Получения реквизитов карты.
+    """
+
+    template: str = 'requisite_card.html'
+
+
+class ConvertCurrencyView(BaseView):
+    """
+    Конвертация валюты.
+    """
+
+    template: str = 'convert_currency.html'
+
+
+class CurrenciesView(BaseView):
+    """
+    Курс валют.
+    """
+
+    template: str = 'currencies.html'
+
+
+class NinbusStoreView(BaseView):
+    """
+    Магазин товаров.
+    """
+
+    template: str = 'nimbus_stote.html'
+
+
+class WhiteListView(BaseView):
+    """
+    Белый список/Избранное.
+    """
+
+    template: str = 'wite_list.html'
+
+
+class ShoppingСartView(BaseView):
+    """
+    Корзина товаров.
+    """
+
+    template: str = 'shopping_cart.html'
+
+
+class HistoryPayView(BaseView):
+    """
+    История покупок.
+    """
+
+    template: str = 'history_pay.html'

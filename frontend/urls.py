@@ -10,6 +10,17 @@ from .views import (
     ForgotPasswordView,
     ResetPasswordView,
     ProfileView,
+    FillWalletView,
+    TransferView,
+    RefillView,
+    HistoryTransferView,
+    ReqisiteCardView,
+    ConvertCurrencyView,
+    CurrenciesView,
+    NinbusStoreView,
+    WhiteListView,
+    ShoppingСartView,
+    HistoryPayView
 )
 
 urlpatterns = [
@@ -33,4 +44,40 @@ urlpatterns = [
 
     # Профиль пользователя
     path('account/', ProfileView.as_view()),
+
+    # Обменный курс
+    path('currencies/', CurrenciesView.as_view()),
+
+    # Перевод на карту
+    path('fill_wallet/', FillWalletView.as_view()),
+
+    # Перевод на карту
+    path('transfer/', TransferView.as_view()),
+
+    # Пополнение карты
+    path('refill/', RefillView.as_view()),
+
+    # История транзакций
+    path('history-transfer/', HistoryTransferView.as_view()),
+
+    # Реквизиты карты
+    path('requisite/', ReqisiteCardView.as_view()),
+
+    # Конвертация валюты
+    path('convert/', ConvertCurrencyView.as_view()),
+
+    # # 
+    # path('/', .as_view()),
+
+    # # 
+    # path('/', .as_view()),
+
+    # # 
+    # path('/', .as_view()),
+
+    # # 
+    # path('/', .as_view()),
+
+    # # 
+    # path('/', .as_view()),
 ]

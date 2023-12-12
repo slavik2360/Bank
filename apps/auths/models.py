@@ -6,7 +6,10 @@ from django.contrib.auth.base_user import (
     BaseUserManager,
     AbstractBaseUser,
 )
-from django.core.validators import MinLengthValidator
+from django.core.validators import (
+    MinLengthValidator,
+    FileExtensionValidator
+)
 from django.utils import timezone
 from django.conf import settings
 import jwt
@@ -60,7 +63,11 @@ class UserManager(BaseUserManager, AbstractManager):
         user.is_staff = True
         user.save(using=self._db)
         return user
-
+    
+    @property
+    def default_poster(self):
+        return '/default/avatar.jpg'
+    
     def get_user_or_none(self, **filter: Any) -> 'User':
         """
         Получить пользователя или None по фильтру.
@@ -76,6 +83,9 @@ class User(PermissionsMixin, AbstractBaseUser, AbstractModel):
     """
     Кастомная модель пользователя.
     """
+    def default_poster() -> str:
+        return '/profile/avatar.jpg'
+    
     # Имя пользователя
     first_name: str = models.CharField(
         verbose_name='имя',
@@ -107,6 +117,19 @@ class User(PermissionsMixin, AbstractBaseUser, AbstractModel):
         validators=(
             MinLengthValidator(7),
         )
+    )
+    # Аватар пользователя
+    avatar: str = models.ImageField(
+        verbose_name='постер',
+        upload_to='posters',
+        validators=[FileExtensionValidator(
+            allowed_extensions=[
+                'png', 'jpg', 'jpeg',
+            ],
+            message='Извините, этот формат файла не поддерживается'
+        )],
+        default=default_poster(),
+        blank=True
     )
     # Есть ли учетная запись пользователя подтверждена для ее использования
     is_active: bool = models.BooleanField(
@@ -143,6 +166,7 @@ class User(PermissionsMixin, AbstractBaseUser, AbstractModel):
         Используется для аутентификации суперпользователя.
         """
         return self.is_active and self.is_superuser and self.is_staff
+    
     
     @property
     def token(self):

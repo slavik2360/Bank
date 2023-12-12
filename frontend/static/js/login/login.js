@@ -25,34 +25,38 @@ btn.addEventListener("click", (event) => {
         .post("http://127.0.0.1:8000/api/v1/auth/login/", formdata)
         .then(() => {
             inputEmail.style.border = "1px solid rgb(40, 167, 79)";
+            
             inputPswrd.style.border = "1px solid rgb(40, 167, 79)";
 
             let text = document.querySelector(".info-p");
             text.style.color = "rgb(40, 167, 79)";
             text.innerText = "Вы успешно вошли";
 
+            inputEmail.value = "";
+            inputPswrd.value = "";
+
             setTimeout(() => {
                 window.location.href = "/account/";
             }, 2000);
         })
-        .catch((error) => {
-            let text = document.querySelector(".info-p");
-            // Обработка ошибок входа
-            for (field in error.response.data) {
-                for (err of error.response.data[field]) {
-                    if (field === "email") {
-                        inputEmail.style.border = "1px solid rgb(220, 53, 69)";
-                        text.style.color = "rgb(220, 53, 69)";
-                        text.innerText = err
-                    } else if (field === "password") {
-                        inputPswrd.style.border = "1px solid rgb(220, 53, 69)";
-                        text.style.color = "rgb(220, 53, 69)";
-                        text.innerText = err
-                    }else{
-                        text.style.color = "rgb(220, 53, 69)";
-                        text.innerText = "Произошла ошибка при обращении к серверу";
-                    }
+        .catch(handleError);
+});
+
+function handleError(error) {
+    if (error.response) {
+        const text = document.querySelector('.info-p');
+        for (const field in error.response.data) {
+            for (const err of error.response.data[field]) {
+                if (field) {
+                    inputEmail.style.border = "1px solid rgb(220, 53, 69)";
+                    inputPswrd.style.border = "1px solid rgb(220, 53, 69)";
+                    text.style.color = 'rgb(220, 53, 69)';
+                    text.innerText = err;
+                } else {
+                    text.style.color = 'rgb(220, 53, 69)';
+                    text.innerText = 'Произошла ошибка при обращении к серверу';
                 }
             }
-        });
-  });
+        }
+    }
+}

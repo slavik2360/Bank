@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+    Пополнение
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/refill_transer.css' %}">
+{% endblock %}
+
+{% block content %}
+    {% if refresh_token_exists %}
+        {% include "profile_nav.html" %}
+    {% else %}
+        {% include "nav.html" %}
+    {% endif %}
+    <div class="login">
+        <div class="login-container">
+            <div class="left-side">
+                <div id="divOne">
+                    <p id="ref">Пополнение</p>
+                </div>
+                <div id="divTwo">
+                    <div>
+                        <div>Номер карты отправителя</div>
+                        <input id="sender-input" type="text" name="sender">
+                        <i class="bi bi-credit-card-2-back-fill"></i>
+                    </div>
+                    <div>
+                        <div>Номер карты получателя</div>
+                        <input id="recipient-input" type="text" name="recipient">
+                        <i class="bi bi-credit-card-2-back-fill"></i>
+                    </div>
+                    <div>
+                        <div>Сумма</div>
+                        <input id="amount-input" type="text" name="amount">
+                        <i class="bi bi-currency-exchange"></i>
+                    </div>
+                </div>
+                <div id="divFour">
+                    <button id="transfer-btn" type="submit">
+                        <p>Перевести</p>
+                    </button>
+                    <p id="transfer-info">Нажмите, чтобы выполнить перевод!</p>
+                </div>
+            </div>
+        </div>
+    </div>    
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/check-auth.js' %}"></script>
+    <script src="{% static 'js/refill_transfer/refill.js' %}"></script>
+{% endblock %}

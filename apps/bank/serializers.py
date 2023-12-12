@@ -22,7 +22,8 @@ from bank.validators import (
     card_validation_error,
     length_card_validation_error,
     amount_validation_error,
-    balance_validation_error
+    balance_validation_error,
+    digit_validation_error
 )
 
 logger = logging.getLogger(__name__)
@@ -73,7 +74,49 @@ class RequisiteSerializer(CustomValidSerializer, AccessTokenMixin):
         return data
 
 
-class ForMeTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
+class FillBalanceSerializer(CustomValidSerializer, AccessTokenMixin):
+    """
+    Сериалайзер для пополнения средств.
+    """
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+    def validate(self, attrs: dict) -> dict:
+        """
+        Валидация данных.
+        """
+        amount_transacrion: str = attrs.get('amount')
+
+        # Проверка, что сумма перевода соответсвует параметрам
+        digit_validation_error(amount=amount_transacrion, raise_exception=True)
+        
+        return attrs
+
+    def save(self) -> None:
+        """
+        Сохранение данных.
+        """
+        amount = self.validated_data['amount']
+        request = self.context.get('request')
+        user = self.get_user(request=request)
+
+        # Получаем клиента
+        client: Client = Client.objects.get(user=user)
+
+        # Увеличиваем баланс 
+        client.account_balance += amount
+        client.save()
+
+    def get_response(self) -> dict:
+        """
+        Возврат ответа представлению.
+        """
+        response: dict = {
+            'data': 'Транзакция успешно выполнена.'
+        }
+        return response
+
+
+class RefillTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
     """
     Сериалайзер для перевода средств.
     """
@@ -144,7 +187,7 @@ class ForMeTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
         return response
 
 
-class ForYouTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
+class TransferTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
     """
     Сериалайзер для перевода средств.
     """
@@ -219,19 +262,26 @@ class ForYouTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
             'data': 'Транзакция успешно выполнена.'
         }
         return response
-    
+
+
+class CardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Card
+        fields = ['number', 'client']
 
 class TransactionSerializer(CustomValidSerializer, AccessTokenMixin):
     """
     Сериалайзер для истории переводов.
     """
-    sender_card_number = serializers.CharField(source='sender.number', read_only=True)
-    receiver_card_number = serializers.CharField(source='receiver.number', read_only=True)
+    sender = serializers.CharField(source='sender.client.user', read_only=True)
+    sender_card = CardSerializer(source='sender', read_only=True)
+    receiver = serializers.CharField(source='receiver.client.user', read_only=True)
+    receiver_card = CardSerializer(source='receiver', read_only=True)
     amount = serializers.DecimalField(max_digits=10, decimal_places=2)
     datetime_created = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
 
     class Meta:
-        fields = ['sender_card_number', 'receiver_card_number', 'amount', 'datetime_created']
+        fields = ['sender', 'sender_card', 'receiver', 'receiver_card', 'amount', 'datetime_created']
 
 
 class CreateCurrencySerializer(CustomValidSerializer):
@@ -242,13 +292,13 @@ class CreateCurrencySerializer(CustomValidSerializer):
         api_key = decouple.config('CURRENCY_KEY', cast=str)
         base_currency = 'KZT'
         # список конвертируемой валюты
-        target_currencies = ['USD', 'EUR', 'GBP', 'JPY', 'CNY']
+        target_currencies = ['USD', 'EUR', 'RUB', 'GBP', 'JPY', 'CNY']
 
         crate_exchange_currency(api_key=api_key,
                                 base_currency=base_currency,
                                 target_currencies=target_currencies
                                 )
-        
+
     def get_response(self) -> dict:
         """
         Возврат ответа представлению.
