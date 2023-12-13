@@ -5,74 +5,168 @@
 {% block title %}Nimbus{% endblock %}
 
 {% block style %}
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/nimbus.css' %}">
 {% endblock %}
 
 {% block content %}
     {% include "nav.html" %}
-
-  
-
-    <!-- <div class="footer">
-        <div class="footer-upper">
-            <div class="container">
-                <div>
-                    <b>Contacts</b>
-                    <i> 
-                        <a href="mailto:itstepbankwebsite@gmail.com">Inbox</a>
-                    </i>
+    <!-- CENTER -->
+    <div class="user-information">
+        <div class="user-container">
+            <div class="column" id="col-2">
+                <!-- первая секция -->
+                <div><h2 class="text-about">Nimbus Bank</h2></div>
+                <div class="first-container">
+                   
+                    <div class="info-image">
+                        <div class="nimbus-image"></div>
+                    </div>  
+                    <div class="info-first">
+                        <div class="text-div">
+                            <p class="text-info">
+                                Nimbus — это не просто банк. Это инновационная финансовая платформа, созданная с учетом вашего образа жизни. 
+                                Мы стремимся предоставить вам удобство, безопасность и интеллектуальные решения для управления вашими финансами.
+                            </p>
+                        </div>
+                    </div>                   
                 </div>
-                <div>
-                    <b>Start using</b>
-                    <i>
-                        <a href="/reg/">Register</a>
-                    </i>
-                    <i>
-                        <a href="/login/">Log in</a>
-                    </i>
-                    <i>
-                        <a href="/forgot-password/">Reset password</a>
-                    </i>
+                <!-- первая секция конец-->
+                <!-- вторая секция  -->
+                <div class="two-container">
+                    <div class="info-two">
+                        <div><h2 class="text-primary">Возможности Nimbus Bank</h2></div>
+                        <section id="features" class="container my-5">
+                
+                            <div class="card mb-3">
+                                <i class="bi bi-wallet-fill text-success"></i>
+                                <div class="card-body">
+                                    <p class="card-text ms-2">Безопасное хранение ваших средств с мгновенным доступом.</p>
+                                </div>
+                            </div>
+                        
+                            <div class="card mb-3">
+                                <i class="bi bi-credit-card-2-front-fill"></i>
+                                <div class="card-body">
+                                    <p class="card-text ms-2">Взаимодействие с другими банками и удобные онлайн-платежи.</p>
+                                </div>
+                            </div>
+                        
+                            <div class="card mb-3">
+                                <i class="bi bi-clipboard2-data-fill"></i>
+                                <div class="card-body">
+                                    <p class="card-text ms-2">Отслеживание всех финансовых операций в реальном времени.</p>
+                                </div>
+                            </div>
+                        
+                            <div class="card mb-3">
+                                <i class="bi bi-bag-heart-fill"></i>
+                                <div class="card-body">
+                                    <p class="card-text ms-2">Покупка различных товаров и услуг безопасно и удобно.</p>
+                                </div>
+                            </div>
+                        
+                            <div class="card mb-3">
+                                <i class="bi bi-postcard-fill"></i>
+                                <div class="card-body">
+                                    <p class="card-text ms-2">Детализированная информация о ваших расходах для лучшего управления бюджетом.</p>
+                                </div>
+                            </div>
+                        
+                            <div class="card mb-3">
+                                <i class="bi bi-file-lock2-fill"></i>
+                                <div class="card-body">
+                                    <p class="card-text ms-2">Безопасность с JWT аутентикацией, гарантируя конфиденциальность ваших данных.</p>
+                                </div>
+                            </div>
+                        </section>
+                    </div>                   
                 </div>
-                <div>
-                    <b>Follow me</b>
-                    <i>
-                        <a href="https://github.com/anigilyatornayapushka"
-                           target="_blank">Github</a>
-                    </i>
-                    <i>
-                        <a href="https://vk.com/yyycka"
-                           target="_blank">Vk</a>
-                    </i>
-                    <i>
-                        <a href="https://t.me/zusjjaka"
-                           target="_blank">Telegram</a>
-                    </i>
-                    <i>
-                        <a href="https://wa.me/87776548573"
-                           target="_blank">Whatsapp</a>
-                    </i>
+                <!-- вторая секция конец -->
+                <div ><h2 class="text-about">Преимущества</h2></div>
+                <!-- третья секция  -->
+                <div class="three-container">
+                    <div class="info-first">
+                        <div class="text-div">
+                            <p class="text-info">
+                                Наши преимущества это максимальная безопасность с инновационными 
+                                технологиями, выгодные условия хранения средств, быстрый выпуск виртуальных карт, 
+                                детализированный мониторинг транзакций и удобный внутренний магазин для разнообразных покупок. 
+                                Предлагаем интеллектуальные решения для управления вашими финансами, обеспечивая комфорт и уверенность в каждой сделке.
+                            </p>
+                        </div>
+                    </div>                  
+                    <div class="info-image">
+                        <div class="nimbus-image2"></div>
+                    </div>  
                 </div>
+                <!-- третья секция конец -->
             </div>
         </div>
-        <div class="footer-lower">
-            <div class="container">
-                <div id="d1">
-                    <a href="https://github.com/slavik2360"
-                       target="_blank">© 2023 Nimbus</a>
-                    <a href="/information/#terms">Terms</a>
-                    <a href="/information/#privacy">Privacy Policy</a>
-                    <a href="/information/#sitemap">Sitemap</a>
-                </div>
-                <div id="d2">
-                    <a href="mailto:itstepbankwebsite@gmail.com">
-                        <i class="bi bi-envelope"></i>
-                    </a>
-                    <a href="https://github.com/anigilyatornayapushka" target="_blank">
-                        <i class="bi bi-github"></i>
-                    </a>
-                </div>
+    </div>
+    <!-- END CENTER -->
+
+   <!-- FOOTER  -->
+   <div class="main_footer">
+        <footer class="footer">
+            <div class="waves">
+            <div class="wave" id="wave1"></div>
+            <div class="wave" id="wave2"></div>
+            <div class="wave" id="wave3"></div>
+            <div class="wave" id="wave4"></div>
             </div>
-        </div>
-    </div> -->
+            <ul class="social-icon">
+                <li class="social-icon__item">
+                    <a target="_blank" class="social-icon__link" href="https://www.facebook.com/profile.php?id=100010210501898">
+                        <ion-icon name="logo-facebook"></ion-icon>
+                    </a>
+                </li>
+                <li class="social-icon__item">
+                    <a target="_blank" class="social-icon__link" href="https://github.com/slavik2360">
+                        <ion-icon name="logo-github"></ion-icon>
+                    </a>
+                </li>
+                <li class="social-icon__item">
+                    <a target="_blank" class="social-icon__link" href="https://twitter.com/slavik2360">
+                        <ion-icon name="logo-twitter"></ion-icon>
+                    </a>
+                </li>
+                <li class="social-icon__item">
+                    <a target="_blank" class="social-icon__link" href="https://t.me/Sterben2360">
+                        <i class="bi bi-telegram"></i>
+                    </a>
+                </li>
+                <li class="social-icon__item">
+                    <a target="_blank" class="social-icon__link" href="https://wa.me/87052510191">
+                        <ion-icon name="logo-whatsapp"></ion-icon>
+                    </a>
+                </li>
+                <li class="social-icon__item">
+                    <a target="_blank" class="social-icon__link" href="https://www.instagram.com/d_anon21/">
+                        <ion-icon name="logo-instagram"></ion-icon>
+                    </a>
+                </li>
+                <li class="social-icon__item">
+                    <a target="_blank" class="social-icon__link" href="https://vk.com/s.bloschenko">
+                        <ion-icon name="logo-vk"></ion-icon>
+                    </a>
+                </li>
+            </ul>
+                <ul class="menu">
+                <li class="menu__item"><a class="menu__link" href="/">Nimbus</a></li>
+                <li class="menu__item"><a class="menu__link" href="#">О нас</a></li>
+                <li class="menu__item"><a class="menu__link" href="#">Услуги</a></li>
+                <li class="menu__item"><a class="menu__link" href="#">Команда</a></li>
+                <li class="menu__item">
+                    <a target="_blank" class="menu__link"href="mailto:salvik2360@gmail.com">Contact</a>
+                </li>
+            </ul>
+            <p>&copy;2023 Nimbus Bank | Все права защищены</p>
+        </footer>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}
