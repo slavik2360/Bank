@@ -15,7 +15,32 @@ from .models import (
 )
 
 
-def card_validation_error(card: str, 
+def card_sender_validation_error(card: str, 
+                          raise_exception: bool = False
+                         ) -> dict | None:
+    """
+    Проверяет, существует ли карта в базе данных.
+
+    Возвращает словарь ошибок или None.
+    """
+    error: dict = {}
+    card_exists = Card.objects.filter(number=card).exists()
+    
+    # Проверка, что введенные данные состоят только из цифр и имеют длину 16 символов
+    if not card.isdigit() or len(card) != 16:
+        error['card'] = ['Некорректный формат номера карты. Введите 16 цифр.']
+    # Проверка, если карты нет возвращаем ошибку 
+    if not card_exists:
+        error['card'] = ['Некорректный номер карты отправителя.']
+
+    # Если не действителен и функция должна вызывать исключение
+    if error and raise_exception is True:
+        raise ValidationError(error)
+
+    # Вернуть ошибки или None
+    return error if error else None
+
+def card_receiver_validation_error(card: str, 
                           raise_exception: bool = False
                          ) -> dict | None:
     """
@@ -39,7 +64,6 @@ def card_validation_error(card: str,
 
     # Вернуть ошибки или None
     return error if error else None
-
 
 def length_card_validation_error(card_sender: str, 
                                 card_receiver: str,

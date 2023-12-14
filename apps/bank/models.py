@@ -40,7 +40,9 @@ class Client(AbstractModel):
     user: 'User' = models.OneToOneField(
         verbose_name='клиент банка',
         to=User, 
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
     )
     account_balance: float = models.DecimalField(
         max_digits=10, 

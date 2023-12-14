@@ -131,7 +131,7 @@ class BankViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
         permission_classes=(IsAuthenticated,), 
         url_path='transactions'
     )
-    def get_transactions(self, request):
+    def get_transactions(self, request: Request) -> JsonResponse:
         user = self.get_user(request=request)
         client = Client.objects.get(user=user)
         transactions = Transaction.objects.get_transactions_for_user(client)
@@ -167,7 +167,7 @@ class BankViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
         permission_classes=(AllowAny,),
         url_path='get_currency'
     )
-    def get_exchange_rates(self, request):
+    def get_exchange_rates(self, request: Request) -> JsonResponse:
         """
         Эндпойнт для вывода актуальной валюты KZT to ... .
         """

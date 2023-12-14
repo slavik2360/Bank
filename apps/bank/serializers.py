@@ -5,6 +5,7 @@ import decouple
 
 # DRF
 from rest_framework import serializers
+from django.db import transaction
 
 # Local
 from auths.models import User
@@ -19,14 +20,14 @@ from bank.models import (
     ExchangeRate
 )
 from bank.validators import (
-    card_validation_error,
+    card_sender_validation_error,
+    card_receiver_validation_error,
     length_card_validation_error,
     amount_validation_error,
     balance_validation_error,
     digit_validation_error
 )
 
-logger = logging.getLogger(__name__)
 
 class CreateClientAndCardSerializer(CustomValidSerializer, AccessTokenMixin):
     """
@@ -88,12 +89,13 @@ class FillBalanceSerializer(CustomValidSerializer, AccessTokenMixin):
 
         # Проверка, что сумма перевода соответсвует параметрам
         digit_validation_error(amount=amount_transacrion, raise_exception=True)
-        
+
         return attrs
 
+    @transaction.atomic
     def save(self) -> None:
         """
-        Сохранение данных.
+        Сохранение данных в атомарной транзакции.
         """
         amount = self.validated_data['amount']
         request = self.context.get('request')
@@ -102,7 +104,7 @@ class FillBalanceSerializer(CustomValidSerializer, AccessTokenMixin):
         # Получаем клиента
         client: Client = Client.objects.get(user=user)
 
-        # Увеличиваем баланс 
+        # Увеличиваем баланс
         client.account_balance += amount
         client.save()
 
@@ -118,7 +120,7 @@ class FillBalanceSerializer(CustomValidSerializer, AccessTokenMixin):
 
 class RefillTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
     """
-    Сериалайзер для перевода средств.
+    Сериалайзер для перевода средств с другого банка.
     """
     sender = serializers.CharField(max_length=16, required=True)
     receiver = serializers.CharField(max_length=16, required=True)
@@ -133,7 +135,7 @@ class RefillTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
         amount_transacrion: str = attrs.get('amount')
 
         # Проверка, что карта существует в базе данных
-        card_validation_error(card=receiver_card_number, raise_exception=True)
+        card_receiver_validation_error(card=receiver_card_number, raise_exception=True)
         # Проверка, что номер карты соответствует длине
         length_card_validation_error(card_sender=sender_card_number, 
                                      card_receiver=receiver_card_number,
@@ -189,7 +191,7 @@ class RefillTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
 
 class TransferTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
     """
-    Сериалайзер для перевода средств.
+    Сериалайзер для перевода средств внутри банка.
     """
     sender = serializers.CharField(max_length=16, required=True)
     receiver = serializers.CharField(max_length=16, required=True)
@@ -201,58 +203,60 @@ class TransferTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
         """
         sender_card_number: str = attrs.get('sender')
         receiver_card_number: str = attrs.get('receiver')
-        amount_transacrion: str = attrs.get('amount')
+        amount_transaction: str = attrs.get('amount')
         request = self.context.get('request')
         client = self.get_user(request=request)
 
-        # Проверка, что карта существует в базе данных
-        card_validation_error(card=sender_card_number, raise_exception=True)
-        # Проверка, что номер карты соответствует длине
+        # Проверка, что карты существуют в базе данных
+        card_receiver_validation_error(card=receiver_card_number, raise_exception=True)
+        card_sender_validation_error(card=sender_card_number, raise_exception=True)
+        # Проверка, что номера карт соответствуют длине
         length_card_validation_error(card_sender=sender_card_number, 
                                      card_receiver=receiver_card_number,
                                      raise_exception=True
                                     )
-        # Проверка, что сумма перевода соответсвует параметрам
-        amount_validation_error(amount=amount_transacrion, raise_exception=True)
+        # Проверка, что сумма перевода соответствует параметрам
+        amount_validation_error(amount=amount_transaction, raise_exception=True)
         # Проверка, средств на балансе
         balance_validation_error(user=client,
-                                 amount=amount_transacrion,  
+                                 amount=amount_transaction,  
                                  raise_exception=True
                                 )
+        
         return attrs
 
+    @transaction.atomic
     def save(self) -> None:
         """
-        Сохранение данных.
+        Сохранение данных в атомарной транзакции.
         """
         sender_card_number = self.validated_data['sender']
         receiver_card_number = self.validated_data['receiver']
         amount = self.validated_data['amount']
 
-        # Проверка существования карты отправителя
-        try:
-            receiver_card = Card.objects.get(number=receiver_card_number)
-        except Card.DoesNotExist:
-            # Если карта отправителя не существует, создаем ее
-            receiver_cvv = random.randrange(100, 1000)
-            Card.objects.create_card(card_number=receiver_card_number , cvv=receiver_cvv)
-            receiver_card = Card.objects.get(number=receiver_card_number )
-
-        # Получаем карту получателя
+        # Получаем карты отправителя и получателя
         sender_card = Card.objects.get(number=sender_card_number)
-        sender_client: Client = sender_card.client
+        receiver_card = Card.objects.get(number=receiver_card_number)
 
-        # Увеличиваем баланс получателя
+        # Получаем клиентов отправителя и получателя
+        sender_client: Client = sender_card.client
+        receiver_client: Client = receiver_card.client
+
+        # Уменьшаем баланс отправителя
         sender_client.account_balance -= amount
         sender_client.save()
 
+        # Увеличиваем баланс получателя
+        receiver_client.account_balance += amount
+        receiver_client.save()
+
         # Создаем объект Transaction
-        transaction: Transaction = Transaction(
+        transaction_obj = Transaction(
             sender=sender_card,
             receiver=receiver_card,
             amount=amount
         )
-        transaction.save()
+        transaction_obj.save()
 
     def get_response(self) -> dict:
         """
