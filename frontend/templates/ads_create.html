@@ -3,17 +3,17 @@
 {% load static %}
 
 {% block title %}
-    Пополнение
+    Создание объявлений 
 {% endblock %}
 
 {% block style %}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/refill_transer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/create_ads.css' %}">
 {% endblock %}
 
 {% block content %}
     {% if refresh_token_exists %}
-        {% include "profile_nav.html" %}
+        {% include "ads_nav.html" %}
     {% else %}
         {% include "nav.html" %}
     {% endif %}
@@ -21,30 +21,30 @@
         <div class="login-container">
             <div class="left-side">
                 <div id="divOne">
-                    <p id="ref">Пополнение с карты другого банка</p>
+                    <p id="ref">Создать объявление</p>
                 </div>
                 <div id="divTwo">
                     <div>
-                        <div>Номер карты отправителя</div>
-                        <input id="sender-input" type="text" name="sender">
-                        <i class="bi bi-credit-card-2-back-fill"></i>
+                        <div>Название*</div>
+                        <input id="title-input" type="text" name="title">
+                        <i class="bi bi-chat-right-text-fill"></i>
                     </div>
                     <div>
-                        <div>Номер карты получателя</div>
-                        <input id="recipient-input" type="text" name="recipient">
-                        <i class="bi bi-credit-card-2-back-fill"></i>
+                        <div>Описание*</div>
+                        <input id="desc-input" type="text" name="description">
+                        <i class="bi bi-chat-right-text-fill"></i>
                     </div>
                     <div>
-                        <div>Сумма</div>
+                        <div>Сумма*</div>
                         <input id="amount-input" type="text" name="amount">
                         <i class="bi bi-currency-exchange"></i>
                     </div>
                 </div>
                 <div id="divFour">
                     <button id="transfer-btn" type="submit">
-                        <p>Перевести</p>
+                        <p>Создать</p>
                     </button>
-                    <p id="transfer-info">Нажмите, чтобы выполнить перевод!</p>
+                    <p id="transfer-info">Нажмите, чтобы создать объявление!</p>
                 </div>
             </div>
         </div>
@@ -53,5 +53,5 @@
 
 {% block script %}
     <script src="{% static 'js/check-auth.js' %}"></script>
-    <script src="{% static 'js/refill_transfer/refill.js' %}"></script>
+    <script src="{% static 'js/ads/create_ads.js' %}"></script>
 {% endblock %}

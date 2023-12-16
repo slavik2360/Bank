@@ -8,6 +8,7 @@ from rest_framework.routers import DefaultRouter
 # Local
 from auths.views import UserViewSet
 from bank.views import BankViewSet
+# from ads.views import AdsViewSet
 
 router = DefaultRouter()
 
@@ -15,7 +16,8 @@ router = DefaultRouter()
 router.register(r'auth', UserViewSet, basename='auth')
 # Роут API обработки для Банка
 router.register(r'bank', BankViewSet, basename='bank')
-
+# Роут API обработки для Объявлений
+# router.register(r'ads', AdsViewSet, basename='bank')
 
 
 urlpatterns = [
@@ -25,6 +27,9 @@ urlpatterns = [
     
     # Роут для API обработки
     path('api/v1/', include(router.urls)),
+
+    # Роут для API обработки Объявлений
+    path('api/v1/ads/', include('ads.urls')),
 
     # Роут для предтавления страниц на сайте
     path("", include('frontend.urls')),

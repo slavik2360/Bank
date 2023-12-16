@@ -32,6 +32,7 @@ PROJECT_APPS = [
     'bank.apps.BankConfig',
     'auths.apps.AuthsConfig',
     'abstracts.apps.AbstractsConfig',
+    'ads.apps.AdsConfig',
     'frontend.apps.FrontendConfig',
 ]
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS
@@ -119,25 +120,25 @@ CORS_ALLOWED_ORIGINS = (
 CORS_URLS_REGEX = r'^/api/.*$'
 
 #-----DATA-BASES--------------------------------------
-# DB_NAME = decouple.config('DB_NAME', cast=str)
-# DB_USER = decouple.config('DB_USER', cast=str)
-# DB_PASS = decouple.config('DB_PASS', cast=str)
-# DB_HOST = decouple.config('DB_HOST', cast=str)
-# DB_PORT = decouple.config('DB_PORT', cast=str)
+DB_NAME = decouple.config('DB_NAME', cast=str)
+DB_USER = decouple.config('DB_USER', cast=str)
+DB_PASS = decouple.config('DB_PASS', cast=str)
+DB_HOST = decouple.config('DB_HOST', cast=str)
+DB_PORT = decouple.config('DB_PORT', cast=str)
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
     # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': DB_NAME,
-    #     'USER': DB_USER,
-    #     'PASSWORD': DB_PASS,
-    #     'HOST': DB_HOST,
-    #     'PORT': DB_PORT
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASS,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT
+    }
 }
 #-----------------------------------------------------
 

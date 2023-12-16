@@ -128,7 +128,7 @@ class User(PermissionsMixin, AbstractBaseUser, AbstractModel):
             ],
             message='Извините, этот формат файла не поддерживается'
         )],
-        default=default_poster(),
+        default=default_poster,
         blank=True
     )
     # Есть ли учетная запись пользователя подтверждена для ее использования

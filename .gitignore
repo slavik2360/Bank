@@ -3,7 +3,8 @@
 env
 env/
 
-# posters/*
+posters/*
+adsImage/*
 *.pyc
 *.pyo
 *.env

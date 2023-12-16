@@ -1,0 +1,82 @@
+html, body {
+    height: 1500px;
+    margin: 0;
+}
+body
+{   
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(45deg, rgb(221, 182, 109), #e0dddf);
+    overflow-x: hidden;
+}
+.user-information
+{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.user-container
+{
+    padding-top: 50px;
+    width: 1050px;
+    display: flex;
+}
+.column
+{
+    margin-top: 30px;
+    width: 350px;
+    height: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+#col-2
+{
+    height: auto;
+    width: 1000px;
+    align-items: center;
+    justify-content: flex-start;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 
+    0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+}
+.transaction-container{
+    margin-top: 10px;
+}
+.transaction-card {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #9b9393;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+.transaction-card p {
+    font-size: 80%;
+    color: black;
+    margin: 5px;
+}
+
+.btn_trans
+{
+    background: rgb(255, 170, 51);
+    width: 100px;
+    height: 35px;
+    text-align: center;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+.btn_trans:hover
+{
+    background: rgb(235, 235, 235); 
+    color: black;
+}
+
+.btn_trans:active
+{
+    background: rgb(235, 235, 235); 
+    color: black;
+}

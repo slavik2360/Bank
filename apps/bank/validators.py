@@ -126,8 +126,8 @@ def amount_validation_error(amount: str,
     except ValueError:
         error['amount'] = ['Введите корректное числовое значение.']
 
-    if amount <= 100:
-        error['amount'] = ['Минимальная сумма перевода должна быть больше 100₸.']
+    if amount <= 99:
+        error['amount'] = ['Минимальная сумма перевода должна быть равно 100₸.']
 
     # Если не действителен и функция должна вызывать исключение
     if error and raise_exception:
@@ -152,8 +152,8 @@ def digit_validation_error(amount: str,
     except ValueError:
         error['amount'] = ['Введите корректное числовое значение.']
 
-    if amount <= 100:
-        error['amount'] = ['Минимальная сумма перевода должна быть больше 100₸.']
+    if amount <= 99:
+        error['amount'] = ['Минимальная сумма должна быть равна 100₸.']
 
     # Если не действителен и функция должна вызывать исключение
     if error and raise_exception:

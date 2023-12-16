@@ -1,0 +1,122 @@
+html, body {
+    margin: 0;
+}
+
+body {
+    background: linear-gradient(45deg, rgb(206, 194, 173), #e0dddf);
+}
+
+.user-information {
+    display: flex;
+    justify-content: center;
+}
+
+.user-container {
+    padding-top: 50px;
+    padding-bottom: 40px;
+}
+
+.column {
+    margin-top: 30px;
+    height: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#col-2 {
+    width: 1050px;  
+    height: 1000px;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 1px 2px, 
+    rgba(0, 0, 0, 0.3) 0px 3.5px 6.5px -1.5px, rgba(0, 0, 0, 0.2) 0px 0px 0px inset;
+}
+/* ПЕРВАЯ СЕКЦИЯ */
+.first-container {
+    width: 100%;
+    height: 33%;
+    margin-top: 10px;
+    border: 1px dotted  black;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.info-first {
+    flex: 0 0 auto;
+    width: 200px;
+    height: 250px;
+    border: 1px solid orangered;
+    margin-top: 20px;
+    margin-left: 10px;
+    margin-right: 5px;
+    border-radius: 10px;
+}
+
+.info-invis{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    border-radius: 10px;
+}
+.info-img{
+    width: 100%;
+    height: 40%;
+    background-image: url(/media/ads_default/ads.png);
+    background-size: cover;
+    background-position: center;
+    padding-bottom: 62.5%;
+    border-radius: 5% 5% 0 0;
+}
+.info-title{
+    width: 100%;
+    height: 15%;
+}
+.info-desc{
+    width: 100%;
+    height: 20%;
+}
+.info-price{
+    width: 100%;
+    height: 15%;
+}
+.info-btn{
+    width: 90%;
+    height: 10%;
+    background-color: rgb(255, 170, 51);
+    text-decoration: none;
+    font-size: 16px;
+}
+/* ВТОРАЯ СЕКЦИЯ */
+
+.two-container {
+    width: 100%;
+    height: 33%;
+    margin-top: 10px;
+    border: 1px dotted  black;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+
+/* ТРЕТЬЯ СЕКЦИЯ */
+.three-container {
+    width: 100%;
+    height: 33%;
+    margin-top: 10px;
+    border: 1px dotted  black;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+}

@@ -17,10 +17,13 @@ from .views import (
     ReqisiteCardView,
     ConvertCurrencyView,
     CurrenciesView,
-    NinbusStoreView,
-    WhiteListView,
-    ShoppingСartView,
-    HistoryPayView
+    NimbusAdsView,
+    CreateAdsView,
+    HistoryAdsView,
+    # NinbusStoreView,
+    # WhiteListView,
+    # ShoppingСartView,
+    # HistoryPayView,
 )
 
 urlpatterns = [
@@ -66,14 +69,14 @@ urlpatterns = [
     # Конвертация валюты
     path('convert/', ConvertCurrencyView.as_view()),
 
-    # # 
-    # path('/', .as_view()),
+    # Объявления
+    path('ads/', NimbusAdsView.as_view()),
 
-    # # 
-    # path('/', .as_view()),
+    # Создание объявлений 
+    path('create_ads/', CreateAdsView.as_view()),
 
-    # # 
-    # path('/', .as_view()),
+    # История объявлений
+    path('history_ads/', HistoryAdsView.as_view()),
 
     # # 
     # path('/', .as_view()),

@@ -149,33 +149,25 @@ class CurrenciesView(BaseView):
     template: str = 'currencies.html'
 
 
-class NinbusStoreView(BaseView):
+class NimbusAdsView(BaseView):
     """
     Магазин товаров.
     """
 
-    template: str = 'nimbus_stote.html'
+    template: str = 'ads_nimbus.html'
 
 
-class WhiteListView(BaseView):
+class CreateAdsView(BaseView):
     """
     Белый список/Избранное.
     """
 
-    template: str = 'wite_list.html'
+    template: str = 'ads_create.html'
 
 
-class ShoppingСartView(BaseView):
+class HistoryAdsView(BaseView):
     """
-    Корзина товаров.
-    """
-
-    template: str = 'shopping_cart.html'
-
-
-class HistoryPayView(BaseView):
-    """
-    История покупок.
+    История объявлений.
     """
 
-    template: str = 'history_pay.html'
+    template: str = 'ads_history.html'

@@ -87,9 +87,9 @@ class FillBalanceSerializer(CustomValidSerializer, AccessTokenMixin):
         """
         amount_transacrion: str = attrs.get('amount')
 
-        # Проверка, что сумма перевода соответсвует параметрам
+        # Проверка, что сумма соответсвует параметрам
         digit_validation_error(amount=amount_transacrion, raise_exception=True)
-
+        
         return attrs
 
     @transaction.atomic
@@ -209,6 +209,7 @@ class TransferTransactionSerializer(CustomValidSerializer, AccessTokenMixin):
 
         # Проверка, что карты существуют в базе данных
         card_receiver_validation_error(card=receiver_card_number, raise_exception=True)
+        
         card_sender_validation_error(card=sender_card_number, raise_exception=True)
         # Проверка, что номера карт соответствуют длине
         length_card_validation_error(card_sender=sender_card_number, 
