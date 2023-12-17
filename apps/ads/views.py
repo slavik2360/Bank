@@ -30,7 +30,7 @@ class AdsCreateView(APIView):
 
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request:Request, *args, **kwargs):
+    def post(self, request: Request, *args, **kwargs) -> JsonResponse:
         serializer = AdsCreateSerializer(
             data=request.data, context={'request': request}
         )
@@ -43,9 +43,10 @@ class AdsCreateView(APIView):
 
 
 class AdsTakeJobView(APIView, AccessTokenMixin):
+    
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request: Request, *args, **kwargs) -> JsonResponse:
         ad_id = kwargs.get('ad_id')
         user = self.get_user(request=request)
 
@@ -76,7 +77,7 @@ class AdsCompleteJobView(APIView, AccessTokenMixin):
 
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request: Request, *args, **kwargs) -> JsonResponse:
         ad_id = kwargs.get('ad_id')
         user = self.get_user(request=request)
         acting_client: Client = Client.objects.get(user=user)
@@ -97,6 +98,7 @@ class AdsCompleteJobView(APIView, AccessTokenMixin):
 
         response_data = serializer.get_response()
         return JsonResponse(response_data, status=status.HTTP_200_OK)
+
 
 class AdsListView(generics.ListAPIView):
     queryset = Ads.objects.all()
