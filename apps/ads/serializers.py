@@ -11,9 +11,9 @@ from ads.models import (
     Ads,
     AdHistory
 )
+from ads.validators import balance_validation_error
 from bank.validators import (
     digit_validation_error,
-    balance_validation_error
 )
 
 

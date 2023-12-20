@@ -8,10 +8,9 @@ from django.db.models.query import QuerySet
 from django.conf import settings
 
 # Local
-from .models import (
+from bank.models import (
     Client,
-    Card,
-    ExchangeRate
+    Card
 )
 
 
