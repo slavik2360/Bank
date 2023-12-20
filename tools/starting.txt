@@ -1,17 +1,19 @@
 ++++++++++ Ссылки на Программы ++++++++++++++++++
                                                 |
-https://www.postgresql.org/download/            | Установка PostgreSQL
+https://www.erlang.org/downloads                |
+https://github.com/tporadowski/redis/releases   |
+https://pypi.org/project/celery/                |
+https://www.postgresql.org/download/            |
                                                 |
 +++++ Необохдимые шаги для запуска проекта ++++++
                                                 |
 1. Настроить .env файл                          | Создание переменных окружения
-2. В PostgreSQL создать БД bank_db              | Создать базу данных
+2. В PostgreSQL создать БД nimbus_bank          | Создать базу данных
 3. python -m venv env                           | Создать виртуальное окружение
 4. source .\env\Scripts\activate                | Активировать его
 5. pip install -r tools\requirements\req.txt    | Установить необходимые модули
    pip install -r tools/requirements/base.txt   | если Linux или MacOs
-8. python manage.py makemigrations              | Произвести миграции
-   python manage.py migrate                     |
+8. python manage.py migrate                     | Произвести миграции
 9. python manage.py runserver                   | Запустить основной сервер
                                                 |
 +++++++++++++++++++++++++++++++++++++++++++++++++

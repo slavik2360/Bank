@@ -135,13 +135,8 @@ class BankViewSet(AccessTokenMixin, ObjectMixin, ViewSet):
         user = self.get_user(request=request)
         client = Client.objects.get(user=user)
         transactions = Transaction.objects.get_transactions_for_user(client)
-
-        # Создаем экземпляр пагинатора
         paginator = TransactionPageNumberPaginator()
-
-        # Получаем пагинированный queryset
         paginated_transactions = paginator.paginate_queryset(transactions, request)
-
         serializer = TransactionSerializer(paginated_transactions, many=True)
         return paginator.get_paginated_response(serializer.data)
 

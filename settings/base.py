@@ -110,7 +110,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
-#-----CORS--------------------------------------
+#-------------------CORS-------------------------------
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = (
@@ -119,7 +119,7 @@ CORS_ALLOWED_ORIGINS = (
 
 CORS_URLS_REGEX = r'^/api/.*$'
 
-#-----DATA-BASES--------------------------------------
+#---------------DATA-BASES-----------------------------
 DB_NAME = decouple.config('DB_NAME', cast=str)
 DB_USER = decouple.config('DB_USER', cast=str)
 DB_PASS = decouple.config('DB_PASS', cast=str)
@@ -142,13 +142,13 @@ DATABASES = {
 }
 #-----------------------------------------------------
 
-#-------------------------------------------
-# CELERY_TIMEZONE = "Asia/Almaty"
-# CELERY_TASK_TRACK_STARTED = True
-# CELERY_TASK_TIME_LIMIT = 30 * 60
-# CELERY_RESULT_BACKEND = 'django-db'
-# CELERY_CACHE_BACKEND = 'redis'
-# CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
+#------------------CELERY-------------------------
+CELERY_TIMEZONE = "Asia/Almaty"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'redis'
+CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
 #-----------------------------------------------------
 
 #--------------------EMAIL-HOST-----------------------
@@ -205,5 +205,3 @@ SIMPLE_JWT = {
 }
 #-----------------------------------------------------
 
-#--------------------E-----------------------
-#-----------------------------------------------------
