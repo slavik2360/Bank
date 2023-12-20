@@ -24,3 +24,19 @@ app.config_from_object(
 app.autodiscover_tasks(
     lambda: settings.PROJECT_APPS
 )
+
+## Запус каждый день в 0:00
+app.conf.beat_schedule = {
+    'every_day_at_00': {
+        'task': 'bank.tasks.delete_expired_cards',
+        'schedule': crontab(minute=0, hour=0),
+    },
+}
+## Запус каждую миуну
+# app.conf.beat_schedule = {
+#     'every_1_minute': {
+#         'task': 'bank.tasks.delete_expired_cards',
+#         'schedule': crontab(minute='*/1'),
+#     },
+# }
+app.conf.timezone = 'UTC'
